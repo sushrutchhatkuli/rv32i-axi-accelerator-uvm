@@ -1,16 +1,16 @@
 ---
 title: "UVM Architecture Hierarchy, Components, and Execution Phases"
 tags:
-  - uvm
-  - verification
-  - methodology
-  - ieee1800-2
-  - object-oriented
+ - uvm
+ - verification
+ - methodology
+ - ieee1800-2
+ - object-oriented
 date_created: 2026-09-10
 status: "Completed"
 ---
 
-# 🏗️ UVM Architecture Hierarchy, Components, and Execution Phases
+# UVM Architecture Hierarchy, Components, and Execution Phases
 
 > [!NOTE] **What is UVM (Universal Verification Methodology)?**
 > Standardized as **IEEE 1800.2**, UVM is a world-wide accepted framework of SystemVerilog base classes. It ensures that verification testbenches built at Apple, NVIDIA, Qualcomm, or Intel follow the exact same architecture, naming conventions, and transaction-level modeling (TLM) rules.
@@ -23,34 +23,34 @@ To understand why UVM has so many different classes, imagine a 5-star restaurant
 
 ```
 +-------------------------------------------------------------------------+
-|                  UVM Test (The Restaurant Director)                     |
-|  Selects today's menu: "Run 5,000 randomized AXI matrix transactions!" |
+| UVM Test (The Restaurant Director) |
+| Selects today's menu: "Run 5,000 randomized AXI matrix transactions!" |
 +-------------------------------------------------------------------------+
-                                     |
-                                     v
+ |
+ v
 +-------------------------------------------------------------------------+
-|                    UVM Environment (The Restaurant)                     |
+| UVM Environment (The Restaurant) |
 +-------------------------------------------------------------------------+
-     |                                               |              |
-     v                                               v              v
-+-----------------------+                    +---------------+ +-------------+
-|       UVM Agent       |                    | UVM Scoreboard| | UVM Coverage|
-| (The Kitchen Station) |                    | (The Food     | | Collector   |
-+-----------------------+                    |  Inspector)   | | (The Book-  |
-     |          |                            +---------------+ |  keeper)    |
-     |          v                                    ^         +-------------+
-     |   +---------------+                           |                ^
-     |   | UVM Sequencer | (The Order Board)         |                |
-     |   +---------------+                           |                |
-     |          | [Orders: uvm_sequence]             |                |
-     |          v                                    |                |
-     |   +---------------+                           |                |
-     |   |  UVM Driver   | (The Hands/Cook)          |                |
-     |   +---------------+                           |                |
-     |          | (Wiggles Physical Pins)            |                |
-     v          v                                    |                |
-+-----------------------+                            |                |
-|      UVM Monitor      | ---------------------------+----------------+
+ | | |
+ v v v
++-----------------------+ +---------------+ +-------------+
+| UVM Agent | | UVM Scoreboard| | UVM Coverage|
+| (The Kitchen Station) | | (The Food | | Collector |
++-----------------------+ | Inspector) | | (The Book- |
+ | | +---------------+ | keeper) |
+ | v ^ +-------------+
+ | +---------------+ | ^
+ | | UVM Sequencer | (The Order Board) | |
+ | +---------------+ | |
+ | | [Orders: uvm_sequence] | |
+ | v | |
+ | +---------------+ | |
+ | | UVM Driver | (The Hands/Cook) | |
+ | +---------------+ | |
+ | | (Wiggles Physical Pins) | |
+ v v | |
++-----------------------+ | |
+| UVM Monitor | ---------------------------+----------------+
 | (The Camera Observer) | (Broadcasts observed transactions via TLM)
 +-----------------------+
 ```
@@ -71,16 +71,16 @@ To understand why UVM has so many different classes, imagine a 5-star restaurant
 Unlike traditional scripts that start and stop arbitrarily, every UVM component automatically executes through **predefined phases** managed by the UVM simulation engine:
 
 ```
-[ Build Phase ]     --> Constructs classes top-down (new, factory create)
-[ Connect Phase ]   --> Hooks up TLM ports & interfaces bottom-up
+[ Build Phase ] --> Constructs classes top-down (new, factory create)
+[ Connect Phase ] --> Hooks up TLM ports & interfaces bottom-up
 [ End-of-Elaboration] -> Final configuration checks
 [ Start-of-Simulation]-> Prints simulation banner
 ========================================================================
-[ Run Phase ]       --> TIME CONSUMING (task run_phase). Clocks tick!
+[ Run Phase ] --> TIME CONSUMING (task run_phase). Clocks tick!
 ========================================================================
-[ Extract Phase ]   --> Collects final scoreboard tallies
-[ Check Phase ]     --> Ensures no leftover packets or dropped data
-[ Report Phase ]    --> Prints FINAL PASS / FAIL banner!
+[ Extract Phase ] --> Collects final scoreboard tallies
+[ Check Phase ] --> Ensures no leftover packets or dropped data
+[ Report Phase ] --> Prints FINAL PASS / FAIL banner!
 ```
 
 ---
@@ -91,14 +91,14 @@ In UVM, time in the `run_phase` will **instantly terminate at time 0** unless at
 
 ```systemverilog
 task run_phase(uvm_phase phase);
-    // 1. Tell UVM: "Do NOT stop the simulator! I have work to do!"
-    phase.raise_objection(this);
+ // 1. Tell UVM: "Do NOT stop the simulator! I have work to do!"
+ phase.raise_objection(this);
 
-    // 2. Start the randomized stimulus sequence
-    my_seq.start(m_sequencer);
+ // 2. Start the randomized stimulus sequence
+ my_seq.start(m_sequencer);
 
-    // 3. Work is finished. Allow the simulator to exit cleanly.
-    phase.drop_objection(this);
+ // 3. Work is finished. Allow the simulator to exit cleanly.
+ phase.drop_objection(this);
 endtask
 ```
 
@@ -109,26 +109,26 @@ endtask
 ### A. The Transaction Item (`axi_seq_item.sv`)
 ```systemverilog
 class axi_seq_item extends uvm_sequence_item;
-    `uvm_object_utils(axi_seq_item)
+ `uvm_object_utils(axi_seq_item)
 
-    typedef enum { READ, WRITE } op_type_e;
+ typedef enum { READ, WRITE } op_type_e;
 
-    rand op_type_e        op_type;
-    rand bit [31:0]       addr;
-    rand bit [31:0]       data;
-    rand bit [3:0]        strb;
-    rand int unsigned     ready_delay; // Latency injection
+ rand op_type_e op_type;
+ rand bit [31:0] addr;
+ rand bit [31:0] data;
+ rand bit [3:0] strb;
+ rand int unsigned ready_delay; // Latency injection
 
-    // Response from DUT
-    bit [1:0]             resp;
+ // Response from DUT
+ bit [1:0] resp;
 
-    // Constraints
-    constraint c_align { addr[1:0] == 2'b00; }
-    constraint c_delay { ready_delay inside {[0:5]}; }
+ // Constraints
+ constraint c_align { addr[1:0] == 2'b00; }
+ constraint c_delay { ready_delay inside {[0:5]}; }
 
-    function new(string name = "axi_seq_item");
-        super.new(name);
-    endfunction
+ function new(string name = "axi_seq_item");
+ super.new(name);
+ endfunction
 endclass
 ```
 
@@ -137,55 +137,55 @@ endclass
 ### B. The Driver (`axi_driver.sv`)
 ```systemverilog
 class axi_driver extends uvm_driver #(axi_seq_item);
-    `uvm_component_utils(axi_driver)
+ `uvm_component_utils(axi_driver)
 
-    virtual axi_if vif;
+ virtual axi_if vif;
 
-    function new(string name, uvm_component parent);
-        super.new(name, parent);
-    endfunction
+ function new(string name, uvm_component parent);
+ super.new(name, parent);
+ endfunction
 
-    function void build_phase(uvm_phase phase);
-        super.build_phase(phase);
-        if (!uvm_config_db#(virtual axi_if)::get(this, "", "vif", vif))
-            `uvm_fatal("NO_VIF", "Virtual interface not found in config_db!")
-    endfunction
+ function void build_phase(uvm_phase phase);
+ super.build_phase(phase);
+ if (!uvm_config_db#(virtual axi_if)::get(this, "", "vif", vif))
+ `uvm_fatal("NO_VIF", "Virtual interface not found in config_db!")
+ endfunction
 
-    task run_phase(uvm_phase phase);
-        forever begin
-            // 1. Get next item from sequencer
-            seq_item_port.get_next_item(req);
-            
-            // 2. Drive physical pins using clocking block
-            drive_transfer(req);
-            
-            // 3. Inform sequencer that item is done
-            seq_item_port.item_done();
-        end
-    endtask
+ task run_phase(uvm_phase phase);
+ forever begin
+ // 1. Get next item from sequencer
+ seq_item_port.get_next_item(req);
+ 
+ // 2. Drive physical pins using clocking block
+ drive_transfer(req);
+ 
+ // 3. Inform sequencer that item is done
+ seq_item_port.item_done();
+ end
+ endtask
 
-    task drive_transfer(axi_seq_item tr);
-        if (tr.op_type == axi_seq_item::WRITE) begin
-            @(vif.driver_cb);
-            vif.driver_cb.awaddr  <= tr.addr;
-            vif.driver_cb.awvalid <= 1'b1;
-            vif.driver_cb.wdata   <= tr.data;
-            vif.driver_cb.wstrb   <= tr.strb;
-            vif.driver_cb.wvalid  <= 1'b1;
+ task drive_transfer(axi_seq_item tr);
+ if (tr.op_type == axi_seq_item::WRITE) begin
+ @(vif.driver_cb);
+ vif.driver_cb.awaddr <= tr.addr;
+ vif.driver_cb.awvalid <= 1'b1;
+ vif.driver_cb.wdata <= tr.data;
+ vif.driver_cb.wstrb <= tr.strb;
+ vif.driver_cb.wvalid <= 1'b1;
 
-            // Wait for handshake
-            do @(vif.driver_cb);
-            while (!(vif.driver_cb.awready && vif.driver_cb.wready));
+ // Wait for handshake
+ do @(vif.driver_cb);
+ while (!(vif.driver_cb.awready && vif.driver_cb.wready));
 
-            vif.driver_cb.awvalid <= 1'b0;
-            vif.driver_cb.wvalid  <= 1'b0;
-            vif.driver_cb.bready  <= 1'b1;
+ vif.driver_cb.awvalid <= 1'b0;
+ vif.driver_cb.wvalid <= 1'b0;
+ vif.driver_cb.bready <= 1'b1;
 
-            do @(vif.driver_cb);
-            while (!vif.driver_cb.bvalid);
-            vif.driver_cb.bready  <= 1'b0;
-        end
-    endtask
+ do @(vif.driver_cb);
+ while (!vif.driver_cb.bvalid);
+ vif.driver_cb.bready <= 1'b0;
+ end
+ endtask
 endclass
 ```
 
@@ -194,34 +194,34 @@ endclass
 ### C. The Monitor (`axi_monitor.sv`)
 ```systemverilog
 class axi_monitor extends uvm_monitor;
-    `uvm_component_utils(axi_monitor)
+ `uvm_component_utils(axi_monitor)
 
-    virtual axi_if vif;
-    uvm_analysis_port #(axi_seq_item) ap; // Broadcasts to Scoreboard
+ virtual axi_if vif;
+ uvm_analysis_port #(axi_seq_item) ap; // Broadcasts to Scoreboard
 
-    function new(string name, uvm_component parent);
-        super.new(name, parent);
-        ap = new("ap", this);
-    endfunction
+ function new(string name, uvm_component parent);
+ super.new(name, parent);
+ ap = new("ap", this);
+ endfunction
 
-    function void build_phase(uvm_phase phase);
-        super.build_phase(phase);
-        uvm_config_db#(virtual axi_if)::get(this, "", "vif", vif);
-    endfunction
+ function void build_phase(uvm_phase phase);
+ super.build_phase(phase);
+ uvm_config_db#(virtual axi_if)::get(this, "", "vif", vif);
+ endfunction
 
-    task run_phase(uvm_phase phase);
-        forever begin
-            @(vif.monitor_cb);
-            // Sample read/write handshakes
-            if (vif.monitor_cb.awvalid && vif.monitor_cb.awready) begin
-                axi_seq_item item = axi_seq_item::type_id::create("item");
-                item.op_type = axi_seq_item::WRITE;
-                item.addr    = vif.monitor_cb.awaddr;
-                item.data    = vif.monitor_cb.wdata;
-                ap.write(item); // Broadcast to Scoreboard!
-            end
-        end
-    endtask
+ task run_phase(uvm_phase phase);
+ forever begin
+ @(vif.monitor_cb);
+ // Sample read/write handshakes
+ if (vif.monitor_cb.awvalid && vif.monitor_cb.awready) begin
+ axi_seq_item item = axi_seq_item::type_id::create("item");
+ item.op_type = axi_seq_item::WRITE;
+ item.addr = vif.monitor_cb.awaddr;
+ item.data = vif.monitor_cb.wdata;
+ ap.write(item); // Broadcast to Scoreboard!
+ end
+ end
+ endtask
 endclass
 ```
 
@@ -229,4 +229,4 @@ endclass
 
 ## Next Steps
 Now that we have transactions streaming through the driver and monitor, how does the Scoreboard verify mathematical correctness?
-👉 [[04_Scoreboard_and_DPI_C_Golden_Model|Proceed to Scoreboard & C++ DPI Golden Model]]
+ [[04_Scoreboard_and_DPI_C_Golden_Model|Proceed to Scoreboard & C++ DPI Golden Model]]

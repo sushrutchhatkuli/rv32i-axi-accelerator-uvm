@@ -1,16 +1,16 @@
 ---
 title: "Executive System Architecture & Top-Level Blueprint"
 tags:
-  - architecture
-  - soc
-  - datapath
-  - interconnect
-  - uvm
+ - architecture
+ - soc
+ - datapath
+ - interconnect
+ - uvm
 date_created: 2026-09-10
 status: "Completed"
 ---
 
-# 🏛️ Executive System Architecture & Top-Level Blueprint
+# Executive System Architecture & Top-Level Blueprint
 
 ![System Architecture](../assets/system_architecture.png)
 
@@ -25,19 +25,19 @@ status: "Completed"
 
 ```mermaid
 flowchart LR
-    subgraph DUT["System-on-Chip (DUT)"]
-        CPU["5-Stage Pipelined\nRISC-V Core (RV32I)"]
-        AXI_M["AXI4 Master\nInterface"]
-        INTERCONNECT["AXI4-Lite\nInterconnect / Crossbar"]
-        RAM_CTRL["Instruction & Data\nRAM Controller"]
-        ACCEL["Custom Compute\nAccelerator (MAC / Systolic)"]
+ subgraph DUT["System-on-Chip (DUT)"]
+ CPU["5-Stage Pipelined\nRISC-V Core (RV32I)"]
+ AXI_M["AXI4 Master\nInterface"]
+ INTERCONNECT["AXI4-Lite\nInterconnect / Crossbar"]
+ RAM_CTRL["Instruction & Data\nRAM Controller"]
+ ACCEL["Custom Compute\nAccelerator (MAC / Systolic)"]
 
-        CPU -->|"Native Memory Request"| AXI_M
-        AXI_M -->|"AXI4-Lite Bus Protocol"| INTERCONNECT
-        INTERCONNECT -->|"0x0000_0000 - 0x2000_FFFF"| RAM_CTRL
-        INTERCONNECT -->|"0x4000_0000 - 0x4000_07FF"| ACCEL
-        ACCEL -.->|"Interrupt Line (IRQ)"| CPU
-    end
+ CPU -->|"Native Memory Request"| AXI_M
+ AXI_M -->|"AXI4-Lite Bus Protocol"| INTERCONNECT
+ INTERCONNECT -->|"0x0000_0000 - 0x2000_FFFF"| RAM_CTRL
+ INTERCONNECT -->|"0x4000_0000 - 0x4000_07FF"| ACCEL
+ ACCEL -.->|"Interrupt Line (IRQ)"| CPU
+ end
 ```
 
 ### Block 1: 5-Stage Pipelined RISC-V Core (RV32I)
@@ -45,24 +45,24 @@ flowchart LR
 - **Specification**: Implements the standard open-source **RV32I Base Integer ISA** (32 general-purpose 32-bit registers `x0`-`x31`).
 - **Microarchitecture**: Classic 5-stage RISC pipeline: Fetch (`IF`), Decode (`ID`), Execute (`EX`), Memory (`MEM`), Writeback (`WB`).
 - **Special Features**:
-  - **Hazard Detection Unit**: Freezes the pipeline when a "load-use" data dependency is detected.
-  - **Data Forwarding Unit**: Teleports calculation results backwards from future pipeline stages to the ALU inputs, avoiding pipeline stalls.
-  - **Interrupt Controller**: Listens for the `irq` pin from the accelerator to wake up or trigger an ISR (Interrupt Service Routine).
-- 👉 Read the full deep-dive: [[02_Five_Stage_Pipelined_Core|5-Stage Pipelined Datapath]]
+ - **Hazard Detection Unit**: Freezes the pipeline when a "load-use" data dependency is detected.
+ - **Data Forwarding Unit**: Teleports calculation results backwards from future pipeline stages to the ALU inputs, avoiding pipeline stalls.
+ - **Interrupt Controller**: Listens for the `irq` pin from the accelerator to wake up or trigger an ISR (Interrupt Service Routine).
+- Read the full deep-dive: [[02_Five_Stage_Pipelined_Core|5-Stage Pipelined Datapath]]
 
 ### Block 2: AXI4 Master Interface
 - **Role**: The translator between the CPU and the system bus.
 - When the CPU executes an instruction like `sw x5, 0(x10)` (Store Word), it emits simple native signals: `addr`, `wdata`, `we` (write enable).
 - The **AXI4 Master Interface** translates this native request into compliant **AMBA AXI4-Lite** transactions across the 5 independent AXI channels (`AW`, `W`, `B`, `AR`, `R`).
-- 👉 Read the full deep-dive: [[02_AXI4_Lite_Master_and_Slave_Design|AXI4-Lite Master Design]]
+- Read the full deep-dive: [[02_AXI4_Lite_Master_and_Slave_Design|AXI4-Lite Master Design]]
 
 ### Block 3: AXI4-Lite Interconnect (The Crossbar / Router)
 - **Role**: The traffic controller of the chip.
 - It examines the destination address (`AWADDR` or `ARADDR`) sent by the CPU and routes the transaction to the correct slave device:
-  - If address is `< 0x4000_0000`: Route to the **RAM Controller**.
-  - If address is between `0x4000_0000` and `0x4000_07FF`: Route to the **Custom Accelerator**.
+ - If address is `< 0x4000_0000`: Route to the **RAM Controller**.
+ - If address is between `0x4000_0000` and `0x4000_07FF`: Route to the **Custom Accelerator**.
 - Ensures that transactions to different slaves do not collide and handles routing responses back to the master.
-- 👉 Read the full deep-dive: [[01_AMBA_AXI4_Lite_Protocol_Deep_Dive|AMBA AXI4-Lite Protocol]]
+- Read the full deep-dive: [[01_AMBA_AXI4_Lite_Protocol_Deep_Dive|AMBA AXI4-Lite Protocol]]
 
 ### Block 4: Instruction & Data RAM Controller
 - **Role**: Manages access to on-chip fast memory (SRAM / Scratchpad).
@@ -73,10 +73,10 @@ flowchart LR
 - **Role**: Offloads heavy matrix multiplication and tensor arithmetic from the CPU.
 - Contains an internal **bank of Multiply-Accumulate (MAC) units** or a **$2 \times 2$ / $4 \times 4$ Systolic Array**.
 - Controlled through Memory-Mapped I/O (**MMIO**) registers:
-  - Base Address: `0x4000_0000`.
-  - The CPU configures input matrix addresses, matrix size, and issues a `START` command.
-  - When finished, the accelerator pulls an **IRQ** wire high to notify the CPU.
-- 👉 Read the full deep-dive: [[01_Custom_Compute_Accelerator_Concepts|Custom Compute Accelerator Concepts]]
+ - Base Address: `0x4000_0000`.
+ - The CPU configures input matrix addresses, matrix size, and issues a `START` command.
+ - When finished, the accelerator pulls an **IRQ** wire high to notify the CPU.
+- Read the full deep-dive: [[01_Custom_Compute_Accelerator_Concepts|Custom Compute Accelerator Concepts]]
 
 ---
 
@@ -97,22 +97,22 @@ In Computer Architecture, **Memory-Mapped I/O (MMIO)** means that hardware perip
 
 ```mermaid
 flowchart LR
-    subgraph UVM["UVM Verification Environment (IEEE 1800.2)"]
-        direction TB
-        SEQ["UVM Sequence\n(Generates Random Transactions)"]
-        SEQR["UVM Sequencer\n(Arbitrates / Buffers)"]
-        DRV["UVM Driver\n(Drives Pins via Virtual Interface)"]
-        VIF[("Virtual Interface\n(Physical Pins + Clocking)")]
-        MON["UVM Monitor\n(Samples Protocol Pins)"]
-        SCB["UVM Scoreboard\n(Contains C++ DPI Golden Model)"]
-        COV["Functional Coverage\n& SVA Assertions"]
+ subgraph UVM["UVM Verification Environment (IEEE 1800.2)"]
+ direction TB
+ SEQ["UVM Sequence\n(Generates Random Transactions)"]
+ SEQR["UVM Sequencer\n(Arbitrates / Buffers)"]
+ DRV["UVM Driver\n(Drives Pins via Virtual Interface)"]
+ VIF[("Virtual Interface\n(Physical Pins + Clocking)")]
+ MON["UVM Monitor\n(Samples Protocol Pins)"]
+ SCB["UVM Scoreboard\n(Contains C++ DPI Golden Model)"]
+ COV["Functional Coverage\n& SVA Assertions"]
 
-        SEQ --> SEQR --> DRV
-        DRV <-->|"Pin Activity"| VIF
-        VIF <-->|"Samples Wires"| MON
-        MON -->|"Analysis TLM Port"| SCB
-        MON -->|"Analysis TLM Port"| COV
-    end
+ SEQ --> SEQR --> DRV
+ DRV <-->|"Pin Activity"| VIF
+ VIF <-->|"Samples Wires"| MON
+ MON -->|"Analysis TLM Port"| SCB
+ MON -->|"Analysis TLM Port"| COV
+ end
 ```
 
 ### Component 1: UVM Sequence & Sequencer
@@ -154,12 +154,12 @@ To see how everything fits together, follow this real execution trace:
 6. **Interrupt**: After 32 clock cycles, computation finishes. The accelerator sets `DONE = 1` in `STATUS` register and pulls the `irq` pin to `1`.
 7. **CPU Readout**: The RISC-V CPU interrupts its main loop, branches to the interrupt service routine, reads the completed matrix from `0x4000_0400`, and verifies the checksum.
 8. **Verification Audit**: Simultaneously, the UVM Monitor captured every single byte transferred over the bus. The C++ Golden Model calculated the exact same matrix multiplication independently. The Scoreboard compares both outputs and reports:
-   ```
-   [SCOREBOARD MATCH] Addr: 0x4000_0400 | HW Output: 0x0045_2000 | Golden: 0x0045_2000 | STATUS: PASS
-   ```
+ ```
+ [SCOREBOARD MATCH] Addr: 0x4000_0400 | HW Output: 0x0045_2000 | Golden: 0x0045_2000 | STATUS: PASS
+ ```
 
 ---
 
 ## Next Steps
 Now let's examine the detailed architecture and microarchitecture of each component:
-- 👉 [[01_RISCV_RV32I_Architecture|Pillar 1: RISC-V RV32I Architecture & Instruction Formats]]
+- [[01_RISCV_RV32I_Architecture|Pillar 1: RISC-V RV32I Architecture & Instruction Formats]]

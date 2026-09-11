@@ -1,16 +1,16 @@
 ---
 title: "Architectural Trade-offs & Engineering Whitepaper"
 tags:
-  - architecture
-  - ppa
-  - tradeoffs
-  - whitepaper
-  - silicon-design
+ - architecture
+ - ppa
+ - tradeoffs
+ - whitepaper
+ - silicon-design
 date_created: 2026-09-10
 status: "Completed"
 ---
 
-# ⚖️ Architectural Trade-offs & Engineering Whitepaper
+# Architectural Trade-offs & Engineering Whitepaper
 
 > [!NOTE] **The Mark of a Principal Architect**
 > Anyone can follow a tutorial.
@@ -35,21 +35,21 @@ status: "Completed"
 ## 2. Interconnect Protocol: AXI4-Lite vs. APB vs. Full AXI4
 
 ```
-High Bandwidth, Heavy Logic  ---------------------------------> Full AXI4 (DRAM / GPUs)
-                                         ^
-                                         |
+High Bandwidth, Heavy Logic ---------------------------------> Full AXI4 (DRAM / GPUs)
+ ^
+ |
 Balanced Latency & Simplicity ---------> AXI4-Lite (OUR CHOICE for Accelerator CSR & Buffers)
-                                         |
-                                         v
-Low Speed, Simple Logic      ---------------------------------> APB (UART, Timers, GPIO)
+ |
+ v
+Low Speed, Simple Logic ---------------------------------> APB (UART, Timers, GPIO)
 ```
 
 - **Why not APB (Advanced Peripheral Bus)?**
-  - APB is an unpipelined protocol: every read/write requires at least 2 cycles. It lacks independent read/write channels and cannot support simultaneous full-duplex transfers.
+ - APB is an unpipelined protocol: every read/write requires at least 2 cycles. It lacks independent read/write channels and cannot support simultaneous full-duplex transfers.
 - **Why not Full AXI4?**
-  - Full AXI4 requires burst length counters (`ARLEN`, `AWLEN`), wrap/increment boundary logic, and out-of-order reorder buffers (`ARID`, `RID`). This adds substantial silicon area and verification complexity without providing significant benefit for small $4 \times 4$ and $8 \times 8$ matrix transfers.
+ - Full AXI4 requires burst length counters (`ARLEN`, `AWLEN`), wrap/increment boundary logic, and out-of-order reorder buffers (`ARID`, `RID`). This adds substantial silicon area and verification complexity without providing significant benefit for small $4 \times 4$ and $8 \times 8$ matrix transfers.
 - **The Sweet Spot: AXI4-Lite**:
-  - Provides full AMBA handshake compliance, separate read and write channels, standardized response codes (`OKAY`, `SLVERR`, `DECERR`), and zero reordering bugs.
+ - Provides full AMBA handshake compliance, separate read and write channels, standardized response codes (`OKAY`, `SLVERR`, `DECERR`), and zero reordering bugs.
 
 ---
 
@@ -62,9 +62,9 @@ In deep learning hardware, two architectures dominate:
 ### Why the 1D Parallel MAC Bank Won for Our SoC:
 - **Matrix Dimension Sweet Spot**: Our target workload is small-to-medium matrices ($4 \times 4$ to $8 \times 8$ for edge sensor filtering, robotics inverse kinematics, and lightweight neural network layers).
 - **The Systolic Array "Fill/Drain" Penalty**:
-  - In a $4 \times 4$ systolic array, inputs must be staggered diagonally. It takes $3$ cycles just to fill the array with data before the first multiplication occurs, and another $3$ cycles to drain the results. For a small $4 \times 4$ matrix, **over 40% of the clock cycles are wasted on pipeline latency overhead**!
+ - In a $4 \times 4$ systolic array, inputs must be staggered diagonally. It takes $3$ cycles just to fill the array with data before the first multiplication occurs, and another $3$ cycles to drain the results. For a small $4 \times 4$ matrix, **over 40% of the clock cycles are wasted on pipeline latency overhead**!
 - **Zero-Latency Overhead**:
-  - Our parallel 4-MAC bank loads 4 elements and computes the dot product immediately. Utilization is **100% on cycle 1**!
+ - Our parallel 4-MAC bank loads 4 elements and computes the dot product immediately. Utilization is **100% on cycle 1**!
 
 ---
 
@@ -73,13 +73,13 @@ In deep learning hardware, two architectures dominate:
 Why does our accelerator use a **dedicated Dual-Port Scratchpad Memory** instead of an L1 Hardware Data Cache?
 
 1. **Deterministic Latency**:
-   - In real-time AI and DSP applications, cache misses cause non-deterministic stalls that violate hard real-time deadlines.
-   - Scratchpad SRAM guarantees **exact 1-cycle access** on every single cycle without hit/miss variability.
+ - In real-time AI and DSP applications, cache misses cause non-deterministic stalls that violate hard real-time deadlines.
+ - Scratchpad SRAM guarantees **exact 1-cycle access** on every single cycle without hit/miss variability.
 2. **Silicon Area & Power**:
-   - A cache requires tag arrays, tag comparators, dirty-bit logic, and cache-coherency controllers.
-   - Scratchpad memory eliminates tag overhead, dedicating 100% of the silicon area to actual data storage.
+ - A cache requires tag arrays, tag comparators, dirty-bit logic, and cache-coherency controllers.
+ - Scratchpad memory eliminates tag overhead, dedicating 100% of the silicon area to actual data storage.
 
 ---
 
-## 🏁 Summary: The Co-Design Philosophy
+## Summary: The Co-Design Philosophy
 Every decision in this project—from the RV32I base ISA and AXI4-Lite bus to Q8.8 arithmetic and UVM verification—was deliberately selected to create a **coherent, production-grade silicon microarchitecture** that mirrors the engineering constraints of real-world semiconductor companies.

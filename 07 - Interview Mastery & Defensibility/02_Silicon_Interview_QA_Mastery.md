@@ -1,18 +1,18 @@
 ---
 title: "Silicon Architecture & DV Technical Interview Master Guide"
 tags:
-  - interview
-  - qa
-  - apple
-  - nvidia
-  - arm
-  - qualcomm
-  - silicon
+ - interview
+ - qa
+ - apple
+ - nvidia
+ - arm
+ - qualcomm
+ - silicon
 date_created: 2026-09-10
 status: "Completed"
 ---
 
-# 🎤 Silicon Architecture & DV Technical Interview Master Guide
+# Silicon Architecture & DV Technical Interview Master Guide
 
 > [!NOTE] **The Real Interview Test**
 > Having this project on your resume **guarantees** technical interview calls from Apple, NVIDIA, ARM, Qualcomm, AMD, and Intel.
@@ -20,7 +20,7 @@ status: "Completed"
 
 ---
 
-## 🏛️ Part 1: RISC-V & Pipeline Microarchitecture
+## Part 1: RISC-V & Pipeline Microarchitecture
 
 ### Q1: Why did you choose a 5-stage pipeline instead of a 3-stage or 10-stage pipeline?
 **Answer**:
@@ -59,7 +59,7 @@ The misprediction penalty is exactly 2 cycles.
 
 ---
 
-## 🛣️ Part 2: AMBA AXI4-Lite Interconnect
+## Part 2: AMBA AXI4-Lite Interconnect
 
 ### Q5: Can `AWREADY` wait for `AWVALID` before asserting, or can `AWVALID` wait for `AWREADY`?
 **Answer**:
@@ -87,7 +87,7 @@ In our interconnect crossbar, if an address does not match RAM (`< 0x2000_FFFF`)
 
 ---
 
-## 🔬 Part 3: SystemVerilog & Assertions (SVA)
+## Part 3: SystemVerilog & Assertions (SVA)
 
 ### Q8: What is a SystemVerilog Clocking Block, and what problem does it solve?
 **Answer**:
@@ -101,13 +101,13 @@ It solves **Verilog delta-cycle race conditions**:
 ### Q9: Explain the difference between overlapping (`|->`) and non-overlapping (`|=>`) implication in SVA.
 **Answer**:
 - **Overlapping (`|->`)**: The consequence is checked in the **exact same clock cycle** as the antecedent.
-  - `(req) |-> (ack)` means: If `req` is high in cycle $N$, `ack` must also be high in cycle $N$.
+ - `(req) |-> (ack)` means: If `req` is high in cycle $N$, `ack` must also be high in cycle $N$.
 - **Non-overlapping (`|=>`)**: The consequence is checked **1 clock cycle after** the antecedent (`##1`).
-  - `(valid && !ready) |=> (valid)` means: If `valid` is high and `ready` is low in cycle $N$, `valid` must remain high in cycle $N+1$.
+ - `(valid && !ready) |=> (valid)` means: If `valid` is high and `ready` is low in cycle $N$, `valid` must remain high in cycle $N+1$.
 
 ---
 
-## 🏗️ Part 4: Universal Verification Methodology (UVM)
+## Part 4: Universal Verification Methodology (UVM)
 
 ### Q10: Walk me through the UVM simulation phases. Which phase consumes simulation time?
 **Answer**:
@@ -137,20 +137,20 @@ In UVM, the simulation will terminate at time 0 of `run_phase` unless an objecti
 
 ---
 
-## 🧮 Part 5: Custom Compute Acceleration & Arithmetic
+## Part 5: Custom Compute Acceleration & Arithmetic
 
 ### Q13: What is Q8.8 fixed-point format? How do you prevent overflow when multiplying two Q8.8 numbers?
 **Answer**:
 Q8.8 is a 16-bit signed fixed-point format with 1 sign bit, 7 integer bits, and 8 fractional bits:
 - Range: $[-128.0, +127.996]$ with resolution $2^{-8} \approx 0.0039$.
 - When two Q8.8 numbers multiply:
-  $$\text{Q8.8} \times \text{Q8.8} = \text{Q16.16 (32 bits!)}$$
+ $$\text{Q8.8} \times \text{Q8.8} = \text{Q16.16 (32 bits!)}$$
 - To convert back to Q8.8:
-  1. We right-shift by 8 bits (`prod >> 8`).
-  2. We apply **Saturation Arithmetic**: If the intermediate 32-bit value exceeds `+127.996` (`0x007F_FFFF`), we clamp the result to maximum positive `0x7FFF`. If it is less than `-128.0`, we clamp to `0x8000`. This prevents wrap-around inversion bugs (where a huge positive number becomes negative).
+ 1. We right-shift by 8 bits (`prod >> 8`).
+ 2. We apply **Saturation Arithmetic**: If the intermediate 32-bit value exceeds `+127.996` (`0x007F_FFFF`), we clamp the result to maximum positive `0x7FFF`. If it is less than `-128.0`, we clamp to `0x8000`. This prevents wrap-around inversion bugs (where a huge positive number becomes negative).
 
 ---
 
 ## Next Steps
 Now review the architectural design trade-offs whitepaper to understand why specific design paths were chosen:
-👉 [[03_Architecture_Tradeoffs_Whitepaper|Proceed to Architecture Trade-offs Whitepaper]]
+ [[03_Architecture_Tradeoffs_Whitepaper|Proceed to Architecture Trade-offs Whitepaper]]

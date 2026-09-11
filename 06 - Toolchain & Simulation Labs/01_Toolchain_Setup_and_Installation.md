@@ -1,18 +1,18 @@
 ---
 title: "Complete Toolchain Setup and Installation Guide"
 tags:
-  - toolchain
-  - simulation
-  - verilator
-  - questasim
-  - vcs
-  - riscv-gcc
-  - gtkwave
+ - toolchain
+ - simulation
+ - verilator
+ - questasim
+ - vcs
+ - riscv-gcc
+ - gtkwave
 date_created: 2026-09-10
 status: "Completed"
 ---
 
-# 💻 Complete Toolchain Setup and Installation Guide
+# Complete Toolchain Setup and Installation Guide
 
 > [!NOTE] **Zero-Dollar Engineering: You Can Build Everything for 100% Free**
 > While semiconductor companies pay hundreds of thousands of dollars for licenses from Synopsys and Siemens, you can build, simulate, and verify this entire system on your personal computer using **100% free open-source software** or free browser-based simulators.
@@ -36,10 +36,10 @@ If you do not want to configure Linux packages or server licenses, you can run f
 
 1. Navigate to **[EDAPlayground.com](https://www.edaplayground.com)** and create a free account (use your university `.edu` email to unlock commercial simulators like Synopsys VCS and Aldec Riviera-PRO).
 2. In the left panel:
-   - **Target**: Select **SystemVerilog/Verilog**.
-   - **Simulator**: Select **Aldec Riviera-PRO** or **Synopsys VCS**.
-   - **UVM / OVM**: Check the box for **UVM 1.2**.
-   - **Open EPWave after run**: Checked (provides instant waveform viewing).
+ - **Target**: Select **SystemVerilog/Verilog**.
+ - **Simulator**: Select **Aldec Riviera-PRO** or **Synopsys VCS**.
+ - **UVM / OVM**: Check the box for **UVM 1.2**.
+ - **Open EPWave after run**: Checked (provides instant waveform viewing).
 3. Copy your RTL into the right pane, your UVM testbench into the left pane, and click **Run**!
 
 ---
@@ -64,8 +64,8 @@ module load questasim
 ```bash
 # Compile UVM package and SystemVerilog files
 vlog -sv +incdir+$UVM_HOME/src $UVM_HOME/src/uvm_pkg.sv \
-     +incdir+rtl/core +incdir+rtl/bus +incdir+verif/tb \
-     rtl/**/*.sv verif/**/*.sv verif/scb/golden_accel.cpp
+ +incdir+rtl/core +incdir+rtl/bus +incdir+verif/tb \
+ rtl/**/*.sv verif/**/*.sv verif/scb/golden_accel.cpp
 
 # Elaborate and simulate with random seed
 vsim -c -voptargs=+acc tb_top +UVM_TESTNAME=accel_random_test -sv_seed random -do "run -all; quit"
@@ -121,7 +121,7 @@ riscv64-unknown-elf-objdump -d firmware.elf > firmware.asm
 Inside your SystemVerilog RAM module, load `firmware.hex` directly into memory at time 0:
 ```systemverilog
 initial begin
-    $readmemh("firmware.hex", ram_memory);
+ $readmemh("firmware.hex", ram_memory);
 end
 ```
 
@@ -130,25 +130,25 @@ end
 ## 6. How to View Waveforms in GTKWave
 
 1. In your top-level testbench (`tb_top.sv`), add this dump block:
-   ```systemverilog
-   initial begin
-       $dumpfile("sim_trace.vcd");
-       $dumpvars(0, tb_top);
-   end
-   ```
+ ```systemverilog
+ initial begin
+ $dumpfile("sim_trace.vcd");
+ $dumpvars(0, tb_top);
+ end
+ ```
 2. Run simulation to produce `sim_trace.vcd`.
 3. Launch GTKWave:
-   ```bash
-   gtkwave sim_trace.vcd
-   ```
+ ```bash
+ gtkwave sim_trace.vcd
+ ```
 4. In the GTKWave hierarchy tree:
-   - Expand `tb_top` $\rightarrow$ `dut` $\rightarrow$ `cpu`.
-   - Add `clk`, `pc`, `id_instr`, `forward_a`, and `hazard_unit.load_use_hazard`.
-   - Expand `axi_if` and add `awvalid`, `awready`, `wdata`, and `bvalid`.
-   - Observe the exact handshake cycles and pipeline bubbles!
+ - Expand `tb_top` $\rightarrow$ `dut` $\rightarrow$ `cpu`.
+ - Add `clk`, `pc`, `id_instr`, `forward_a`, and `hazard_unit.load_use_hazard`.
+ - Expand `axi_if` and add `awvalid`, `awready`, `wdata`, and `bvalid`.
+ - Observe the exact handshake cycles and pipeline bubbles!
 
 ---
 
 ## Next Steps
 Now let's look at the automated Makefiles and regression scripts to run your simulations with a single command:
-👉 [[02_Simulation_Scripts_and_Makefiles|Proceed to Simulation Scripts & Makefiles]]
+ [[02_Simulation_Scripts_and_Makefiles|Proceed to Simulation Scripts & Makefiles]]

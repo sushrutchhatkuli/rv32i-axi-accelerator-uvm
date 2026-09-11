@@ -1,16 +1,16 @@
 ---
 title: "Verification Fundamentals: From Zero to Constrained-Random Methodology"
 tags:
-  - verification
-  - testbench
-  - systemverilog
-  - constrained-random
-  - dv
+ - verification
+ - testbench
+ - systemverilog
+ - constrained-random
+ - dv
 date_created: 2026-09-10
 status: "Completed"
 ---
 
-# 🔬 Verification Fundamentals: From Zero to Constrained-Random Methodology
+# Verification Fundamentals: From Zero to Constrained-Random Methodology
 
 > [!NOTE] **The Economics of Silicon: Why DV Engineers Rule the Industry**
 > In software development, testing is often an afterthought. If code crashes in production, you deploy a hotfix in 10 minutes.
@@ -29,9 +29,9 @@ In your early college classes, how did you test a Verilog module?
 You wrote a simple testbench:
 ```verilog
 initial begin
-    a = 5; b = 3; #10;
-    a = 2; b = 8; #10;
-    $display("Done testing!");
+ a = 5; b = 3; #10;
+ a = 2; b = 8; #10;
+ $display("Done testing!");
 end
 ```
 
@@ -54,28 +54,28 @@ Instead of manually writing inputs, modern verification engineers build an **int
 
 ```
 +-------------------------------------------------------------+
-|                Constrained-Random Stimulus                  |
+| Constrained-Random Stimulus |
 +-------------------------------------------------------------+
-                               |
-         Random, but legally constrained transactions
-                               |
-                               v
-               +-------------------------------+
-               |    DUT (Device Under Test)    |
-               +-------------------------------+
-                               |
-                               v
-               +-------------------------------+
-               |   Automated Scoreboard Check  |
-               +-------------------------------+
+ |
+ Random, but legally constrained transactions
+ |
+ v
+ +-------------------------------+
+ | DUT (Device Under Test) |
+ +-------------------------------+
+ |
+ v
+ +-------------------------------+
+ | Automated Scoreboard Check |
+ +-------------------------------+
 ```
 
 ### What does "Constrained-Random" mean?
 - **Random**: The computer generates thousands of randomized numbers, delays, opcodes, and memory addresses.
 - **Constrained**: We set legal boundary rules so the random generator doesn't produce complete gibberish:
-  - *"Generate random instructions, but make sure 30% are Loads, 30% are Stores, and 40% are Branches."*
-  - *"Randomize the `READY` latency between 0 and 5 clock cycles to simulate memory backpressure."*
-  - *"Ensure matrix inputs occasionally hit corner cases: `0x0000` (zero), `0x7FFF` (maximum positive), and `0x8000` (maximum negative)."*
+ - *"Generate random instructions, but make sure 30% are Loads, 30% are Stores, and 40% are Branches."*
+ - *"Randomize the `READY` latency between 0 and 5 clock cycles to simulate memory backpressure."*
+ - *"Ensure matrix inputs occasionally hit corner cases: `0x0000` (zero), `0x7FFF` (maximum positive), and `0x8000` (maximum negative)."*
 
 By running 100,000 randomized transactions overnight across a computing cluster, CRV uncovers obscure bugs in hours that would take human testers months to find!
 
@@ -91,19 +91,19 @@ Standard Verilog (created in 1984) was designed only for describing digital hard
 You can define transactions as reusable software objects with inheritance, polymorphism, and methods:
 ```systemverilog
 class axi_transaction;
-    rand bit [31:0] addr;
-    rand bit [31:0] data;
-    rand bit [3:0]  strb;
-    rand int        delay_cycles;
+ rand bit [31:0] addr;
+ rand bit [31:0] data;
+ rand bit [3:0] strb;
+ rand int delay_cycles;
 
-    // Constraints guide the randomization engine!
-    constraint c_aligned_addr {
-        addr[1:0] == 2'b00; // Must be 4-byte word-aligned!
-    }
+ // Constraints guide the randomization engine!
+ constraint c_aligned_addr {
+ addr[1:0] == 2'b00; // Must be 4-byte word-aligned!
+ }
 
-    constraint c_reasonable_delay {
-        delay_cycles inside {[0:5]};
-    }
+ constraint c_reasonable_delay {
+ delay_cycles inside {[0:5]};
+ }
 endclass
 ```
 
@@ -112,7 +112,7 @@ With a single call, SystemVerilog's built-in solver generates mathematically val
 ```systemverilog
 axi_transaction tr = new();
 if (!tr.randomize()) begin
-    $error("Randomization failed!");
+ $error("Randomization failed!");
 end
 ```
 
@@ -133,4 +133,4 @@ To claim that a silicon design is verified, three conditions must be satisfied:
 
 ## Next Steps
 Let's see how SystemVerilog interfaces eliminate timing race conditions and enforce protocol rules with SystemVerilog Assertions:
-👉 [[02_SystemVerilog_Interfaces_and_SVA|Proceed to SystemVerilog Interfaces & Assertions (SVA)]]
+ [[02_SystemVerilog_Interfaces_and_SVA|Proceed to SystemVerilog Interfaces & Assertions (SVA)]]

@@ -1,16 +1,16 @@
 ---
 title: "AMBA AXI4-Lite Protocol Deep Dive"
 tags:
-  - axi
-  - amba
-  - bus-protocol
-  - arm
-  - interconnect
+ - axi
+ - amba
+ - bus-protocol
+ - arm
+ - interconnect
 date_created: 2026-09-10
 status: "Completed"
 ---
 
-# 🛣️ AMBA AXI4-Lite Protocol Deep Dive
+# AMBA AXI4-Lite Protocol Deep Dive
 
 > [!IMPORTANT] **Why Every Major Silicon Company (ARM, Apple, Qualcomm, NVIDIA) Uses AXI**
 > If you connect hardware blocks with arbitrary custom wires, your system quickly becomes an unmaintainable rat's nest.
@@ -37,44 +37,44 @@ This is precisely how **AMBA AXI** works.
 Unlike legacy buses (like PCI or APB) where address and data share wires, AXI separates communication into **5 completely independent, unidirectional channels**:
 
 ```
-                       +-----------------------------------+
-                       |         AXI Interconnect          |
-                       +-----------------------------------+
-                             ^                       |
-            Write Address    |   AWADDR, AWVALID     |
-         +-------------------+-----------------------+
-         |                   |   AWREADY             |
-         |                   |                       v
-         |  Write Data       |   WDATA, WSTRB, WVALID
+ +-----------------------------------+
+ | AXI Interconnect |
+ +-----------------------------------+
+ ^ |
+ Write Address | AWADDR, AWVALID |
+ +-------------------+-----------------------+
+ | | AWREADY |
+ | | v
+ | Write Data | WDATA, WSTRB, WVALID
 [ MASTER |-------------------+-----------------------> [ SLAVE ]
-  (CPU)  |                   |   WREADY              |
-         |  Write Response   |   BRESP, BVALID       |
-         |<------------------+-----------------------+
-         |                   |   BREADY              |
-         |                   |                       |
-         |  Read Address     |   ARADDR, ARVALID     |
-         |-------------------+-----------------------+
-         |                   |   ARREADY             |
-         |                   |                       v
-         |  Read Data        |   RDATA, RRESP, RVALID
-         |<------------------+-----------------------+
-         |                   |   RREADY              |
-         +-------------------+-----------------------+
+ (CPU) | | WREADY |
+ | Write Response | BRESP, BVALID |
+ |<------------------+-----------------------+
+ | | BREADY |
+ | | |
+ | Read Address | ARADDR, ARVALID |
+ |-------------------+-----------------------+
+ | | ARREADY |
+ | | v
+ | Read Data | RDATA, RRESP, RVALID
+ |<------------------+-----------------------+
+ | | RREADY |
+ +-------------------+-----------------------+
 ```
 
 ### The 3 Write Channels:
 1. **Write Address Channel (`AW`)**:
-   - Master issues the target memory address (`AWADDR`) where it wants to write.
+ - Master issues the target memory address (`AWADDR`) where it wants to write.
 2. **Write Data Channel (`W`)**:
-   - Master issues the actual payload data bytes (`WDATA`) and byte strobe flags (`WSTRB`).
+ - Master issues the actual payload data bytes (`WDATA`) and byte strobe flags (`WSTRB`).
 3. **Write Response Channel (`B`)**:
-   - Slave sends an acknowledgment back to the Master (`BRESP`) confirming whether the write succeeded or failed.
+ - Slave sends an acknowledgment back to the Master (`BRESP`) confirming whether the write succeeded or failed.
 
 ### The 2 Read Channels:
 4. **Read Address Channel (`AR`)**:
-   - Master issues the memory address (`ARADDR`) it wants to read from.
+ - Master issues the memory address (`ARADDR`) it wants to read from.
 5. **Read Data Channel (`R`)**:
-   - Slave returns the retrieved data (`RDATA`) along with a status code (`RRESP`).
+ - Slave returns the retrieved data (`RDATA`) along with a status code (`RRESP`).
 
 > [!TIP] **Why are Read and Write completely separate?**
 > Because they are independent physical channels, a CPU can simultaneously **read instructions from memory** while **streaming write data into an accelerator** without them blocking each other! This allows full-duplex communication.
@@ -86,22 +86,22 @@ Unlike legacy buses (like PCI or APB) where address and data share wires, AXI se
 Every single one of the 5 channels uses the identical **`VALID` / `READY` Handshake Rule**:
 
 ```
-Clock        __    __    __    __    __    __
-clk       __/  \__/  \__/  \__/  \__/  \__/  \__
-               |     |     |     |     |
-VALID     _____/=================\___________  (Driven by Sender)
-               |     |     |     |
-READY     ___________/===========\___________  (Driven by Receiver)
-               |     |     |     |
-DATA/ADDR -----<     VALID DATA  >------------
-               |     |     |     |
-Handshake      No    No   TRANSFER! No    No
-                           (Cycle 3)
+Clock __ __ __ __ __ __
+clk __/ \__/ \__/ \__/ \__/ \__/ \__
+ | | | | |
+VALID _____/=================\___________ (Driven by Sender)
+ | | | |
+READY ___________/===========\___________ (Driven by Receiver)
+ | | | |
+DATA/ADDR -----< VALID DATA >------------
+ | | | |
+Handshake No No TRANSFER! No No
+ (Cycle 3)
 ```
 
 ### The 3 Golden Rules of AXI:
 1. **Transfer Condition**: Information transfers **if and only if** both `VALID` and `READY` are high on the rising edge of `clk`:
-   $$\text{Transfer Occurred} \iff (\text{VALID} == 1) \ \&\& \ (\text{READY} == 1)$$
+ $$\text{Transfer Occurred} \iff (\text{VALID} == 1) \ \&\& \ (\text{READY} == 1)$$
 2. **No Backing Out**: Once a sender asserts `VALID = 1`, it **MUST keep `VALID` high and keep its payload signals completely stable** until `READY = 1` occurs! A sender cannot change its mind and drop `VALID`.
 3. **No Deadlock Condition**: A sender must **NEVER** wait for `READY` to go high before asserting `VALID`. `VALID` can be asserted unconditionally. However, a receiver **IS** permitted to wait for `VALID` before asserting `READY`.
 
@@ -155,17 +155,17 @@ Whenever a read or write occurs, the slave sends a 2-bit response code:
 Why did we choose **AXI4-Lite** for our accelerator control and interconnect?
 
 - **Full AXI4**:
-  - Supports **Bursting** (sending 256 consecutive data beats with only 1 address phase).
-  - Supports **Out-of-Order Transactions** (using `ID` tags: requests can return in any order).
-  - Supports unaligned transfers, cacheability signals, atomic locking.
-  - *Drawback*: Requires thousands of additional logic gates and massive FIFO buffers.
+ - Supports **Bursting** (sending 256 consecutive data beats with only 1 address phase).
+ - Supports **Out-of-Order Transactions** (using `ID` tags: requests can return in any order).
+ - Supports unaligned transfers, cacheability signals, atomic locking.
+ - *Drawback*: Requires thousands of additional logic gates and massive FIFO buffers.
 - **AXI4-Lite**:
-  - A clean, streamlined subset: every data beat has an address phase, transfers are strictly 32-bit or 64-bit, no burst IDs.
-  - **Ideal for Control & Status Registers (CSRs)**, low-to-medium bandwidth peripherals, and memory-mapped coprocessors.
-  - Minimal silicon footprint and zero out-of-order reordering bugs!
+ - A clean, streamlined subset: every data beat has an address phase, transfers are strictly 32-bit or 64-bit, no burst IDs.
+ - **Ideal for Control & Status Registers (CSRs)**, low-to-medium bandwidth peripherals, and memory-mapped coprocessors.
+ - Minimal silicon footprint and zero out-of-order reordering bugs!
 
 ---
 
 ## Next Steps
 Now let's look at the actual synthesizable finite state machines (FSMs) for our Master and Slave hardware blocks:
-👉 [[02_AXI4_Lite_Master_and_Slave_Design|Proceed to AXI4-Lite Master & Slave Implementation]]
+ [[02_AXI4_Lite_Master_and_Slave_Design|Proceed to AXI4-Lite Master & Slave Implementation]]

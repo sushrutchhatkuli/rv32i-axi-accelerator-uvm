@@ -1,16 +1,16 @@
 ---
 title: "RISC-V RV32I Architecture & Instruction Set Specification"
 tags:
-  - riscv
-  - rv32i
-  - isa
-  - instruction-set
-  - microarchitecture
+ - riscv
+ - rv32i
+ - isa
+ - instruction-set
+ - microarchitecture
 date_created: 2026-09-10
 status: "Completed"
 ---
 
-# 📜 RISC-V RV32I Architecture & ISA Specification
+# RISC-V RV32I Architecture & ISA Specification
 
 > [!NOTE] **What is an ISA?**
 > An **Instruction Set Architecture (ISA)** is the sacred contract between software and hardware.
@@ -70,19 +70,19 @@ Every single instruction in RV32I is encoded in **exactly 32 bits** (Bit 31 down
 To make decoding blisteringly fast in silicon, the register addresses (`rs1`, `rs2`, `rd`) are placed at the **exact same bit positions** across all formats!
 
 ```
- 31        25 24        20 19        15 14  12 11         7 6            0
+ 31 25 24 20 19 15 14 12 11 7 6 0
 +------------+------------+------------+------+------------+--------------+
-|   funct7   |    rs2     |    rs1     |funct3|     rd     |    opcode    |  R-type
+| funct7 | rs2 | rs1 |funct3| rd | opcode | R-type
 +------------+------------+------------+------+------------+--------------+
-|          imm[11:0]      |    rs1     |funct3|     rd     |    opcode    |  I-type
+| imm[11:0] | rs1 |funct3| rd | opcode | I-type
 +------------+------------+------------+------+------------+--------------+
-|  imm[11:5] |    rs2     |    rs1     |funct3|  imm[4:0]  |    opcode    |  S-type
+| imm[11:5] | rs2 | rs1 |funct3| imm[4:0] | opcode | S-type
 +------------+------------+------------+------+------------+--------------+
-| imm[12|10:5] |  rs2     |    rs1     |funct3|imm[4:1|11] |    opcode    |  B-type
+| imm[12|10:5] | rs2 | rs1 |funct3|imm[4:1|11] | opcode | B-type
 +------------+------------+------------+------+------------+--------------+
-|                    imm[31:12]               |     rd     |    opcode    |  U-type
+| imm[31:12] | rd | opcode | U-type
 +------------+------------+------------+------+------------+--------------+
-|             imm[20|10:1|11|19:12]           |     rd     |    opcode    |  J-type
+| imm[20|10:1|11|19:12] | rd | opcode | J-type
 +---------------------------------------------+------------+--------------+
 ```
 
@@ -113,7 +113,7 @@ $$rd \leftarrow rs1 \text{ OP } rs2$$
 | `xor rd, rs1, rs2` | Bitwise XOR | `0000000` | `100` | `0110011` | $rd = rs1 \oplus rs2$ |
 | `srl rd, rs1, rs2` | Shift Right Logical | `0000000` | `101` | `0110011` | $rd = rs1 \gg rs2[4:0]$ (zero fill) |
 | `sra rd, rs1, rs2` | Shift Right Arithmetic | `0100000` | `101` | `0110011` | $rd = rs1 \gg rs2[4:0]$ (sign extend) |
-| `or rd, rs1, rs2`  | Bitwise OR | `0000000` | `110` | `0110011` | $rd = rs1 \mid rs2$ |
+| `or rd, rs1, rs2` | Bitwise OR | `0000000` | `110` | `0110011` | $rd = rs1 \mid rs2$ |
 | `and rd, rs1, rs2` | Bitwise AND | `0000000` | `111` | `0110011` | $rd = rs1 \ \& \ rs2$ |
 
 ---
@@ -128,11 +128,11 @@ $$rd \leftarrow rs1 \text{ OP } \text{SignExtend}(imm)$$
 | `slti rd, rs1, imm` | Set Less Than Imm | `010` | `0010011` | $rd = (rs1 <_{signed} imm) \text{ ? } 1 : 0$ |
 | `sltiu rd, rs1, imm`| Set Less Than Imm Unsigned | `011` | `0010011` | $rd = (rs1 <_{unsigned} imm) \text{ ? } 1 : 0$ |
 | `xori rd, rs1, imm` | Bitwise XOR Imm | `100` | `0010011` | $rd = rs1 \oplus imm$ |
-| `ori rd, rs1, imm`  | Bitwise OR Imm | `110` | `0010011` | $rd = rs1 \mid imm$ |
+| `ori rd, rs1, imm` | Bitwise OR Imm | `110` | `0010011` | $rd = rs1 \mid imm$ |
 | `andi rd, rs1, imm` | Bitwise AND Imm | `111` | `0010011` | $rd = rs1 \ \& \ imm$ |
 | `slli rd, rs1, shamt`| Shift Left Logical Imm | `001` | `0010011` | $rd = rs1 \ll shamt$ |
 | `srli rd, rs1, shamt`| Shift Right Logical Imm| `101` | `0010011` | $rd = rs1 \gg shamt$ |
-| `srai rd, rs1, shamt`| Shift Right Arith Imm  | `101` | `0010011` | $rd = rs1 \gg shamt$ (sign filled) |
+| `srai rd, rs1, shamt`| Shift Right Arith Imm | `101` | `0010011` | $rd = rs1 \gg shamt$ (sign filled) |
 
 #### Load Instructions (Reading from Memory):
 Target Address is calculated as $\text{Effective Address} = rs1 + \text{SignExtend}(imm)$.
@@ -185,24 +185,24 @@ In hardware, the Immediate Generator takes the raw 32-bit instruction `instr[31:
 
 ```systemverilog
 always_comb begin
-    case (opcode)
-        7'b0010011, 7'b0000011, 7'b1100111: // I-Type (ALUi, Load, JALR)
-            imm_ext = {{20{instr[31]}}, instr[31:20]};
-            
-        7'b0100011: // S-Type (Store)
-            imm_ext = {{20{instr[31]}}, instr[31:25], instr[11:7]};
-            
-        7'b1100011: // B-Type (Branch)
-            imm_ext = {{19{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1'b0};
-            
-        7'b0110111, 7'b0010111: // U-Type (LUI, AUIPC)
-            imm_ext = {instr[31:12], 12'b0};
-            
-        7'b1101111: // J-Type (JAL)
-            imm_ext = {{11{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:21], 1'b0};
-            
-        default: imm_ext = 32'b0;
-    endcase
+ case (opcode)
+ 7'b0010011, 7'b0000011, 7'b1100111: // I-Type (ALUi, Load, JALR)
+ imm_ext = {{20{instr[31]}}, instr[31:20]};
+ 
+ 7'b0100011: // S-Type (Store)
+ imm_ext = {{20{instr[31]}}, instr[31:25], instr[11:7]};
+ 
+ 7'b1100011: // B-Type (Branch)
+ imm_ext = {{19{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1'b0};
+ 
+ 7'b0110111, 7'b0010111: // U-Type (LUI, AUIPC)
+ imm_ext = {instr[31:12], 12'b0};
+ 
+ 7'b1101111: // J-Type (JAL)
+ imm_ext = {{11{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:21], 1'b0};
+ 
+ default: imm_ext = 32'b0;
+ endcase
 end
 ```
 
@@ -210,4 +210,4 @@ end
 
 ## Next Steps
 Now that we know the instruction language, let's see how the hardware pipeline executes these instructions cycle by cycle:
-👉 [[02_Five_Stage_Pipelined_Core|Proceed to the 5-Stage Pipelined Datapath]]
+ [[02_Five_Stage_Pipelined_Core|Proceed to the 5-Stage Pipelined Datapath]]

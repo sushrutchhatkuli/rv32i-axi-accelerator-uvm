@@ -1,16 +1,16 @@
 ---
 title: "Pipeline Hazards, Data Forwarding, and Branch Prediction"
 tags:
-  - riscv
-  - hazards
-  - forwarding
-  - branch-prediction
-  - microarchitecture
+ - riscv
+ - hazards
+ - forwarding
+ - branch-prediction
+ - microarchitecture
 date_created: 2026-09-10
 status: "Completed"
 ---
 
-# ⚡ Pipeline Hazards, Data Forwarding, and Branch Prediction
+# Pipeline Hazards, Data Forwarding, and Branch Prediction
 
 > [!IMPORTANT] **Why Interviewers at Apple, NVIDIA, and ARM Obsess Over This Note**
 > Any student can wire up an ALU and a program counter.
@@ -25,15 +25,15 @@ A **Hazard** is an event where the next instruction in the pipeline cannot execu
 There are three fundamental types of hazards:
 
 ```
-                  +---------------------------+
-                  |     Pipeline Hazards      |
-                  +---------------------------+
-                     /          |          \
-                    /           |           \
-         +-------------+  +-------------+  +-------------+
-         | Structural  |  |    Data     |  |   Control   |
-         |   Hazard    |  |   Hazard    |  |   Hazard    |
-         +-------------+  +-------------+  +-------------+
+ +---------------------------+
+ | Pipeline Hazards |
+ +---------------------------+
+ / | \
+ / | \
+ +-------------+ +-------------+ +-------------+
+ | Structural | | Data | | Control |
+ | Hazard | | Hazard | | Hazard |
+ +-------------+ +-------------+ +-------------+
 ```
 
 1. **Structural Hazard**: Hardware resource conflict. (e.g. Trying to read and write to the same single-port memory at the exact same cycle. Resolved by separating Instruction and Data memory / caches).
@@ -46,23 +46,23 @@ There are three fundamental types of hazards:
 
 Consider this ordinary assembly sequence:
 ```assembly
-add x1, x2, x3    # Cycle 1: Computes x1 = x2 + x3
-sub x4, x1, x5    # Cycle 2: Uses x1 to compute x4 = x1 - x5
-and x6, x1, x7    # Cycle 3: Uses x1
+add x1, x2, x3 # Cycle 1: Computes x1 = x2 + x3
+sub x4, x1, x5 # Cycle 2: Uses x1 to compute x4 = x1 - x5
+and x6, x1, x7 # Cycle 3: Uses x1
 ```
 
 Let's look at the pipeline timing diagram:
 
 ```
-Clock Cycle:       1    2    3    4    5    6    7
+Clock Cycle: 1 2 3 4 5 6 7
 ------------------------------------------------------
-add x1, x2, x3:   [IF] [ID] [EX] [MEM] [WB]
-                              ^          |
-                              |   Value of x1 written here!
-                              |
-sub x4, x1, x5:        [IF] [ID] [EX] [MEM] [WB]
-                              ^
-                              Needs value of x1 here!
+add x1, x2, x3: [IF] [ID] [EX] [MEM] [WB]
+ ^ |
+ | Value of x1 written here!
+ |
+sub x4, x1, x5: [IF] [ID] [EX] [MEM] [WB]
+ ^
+ Needs value of x1 here!
 ```
 
 ### The Problem:
@@ -83,21 +83,21 @@ The correct answer for `x1` was already computed by the ALU at the end of **Cycl
 Instead of waiting for `add` to reach Writeback, we can build dedicated **Bypass Wires (Forwarding Multiplexers)** that send the result directly from `EX/MEM` back to the ALU input in the `EX` stage!
 
 ```
-                    +--------------------+
-                    |  Forwarding Unit   |
-                    +--------------------+
-                       |              |
-         ForwardA Mux  |              |  ForwardB Mux
-             v         v              v         v
-             +---+                        +---+
-  rs1_data ->| 0 |                        | 0 |<- rs2_data (or imm)
-  EX/MEM ---->| 1 |--------+      +-------| 1 |<-- EX/MEM
-  MEM/WB ---->| 2 |        |      |       | 2 |<-- MEM/WB
-             +---+        |      |       +---+
-                           v      v
-                         +----------+
-                         |   ALU    |
-                         +----------+
+ +--------------------+
+ | Forwarding Unit |
+ +--------------------+
+ | |
+ ForwardA Mux | | ForwardB Mux
+ v v v v
+ +---+ +---+
+ rs1_data ->| 0 | | 0 |<- rs2_data (or imm)
+ EX/MEM ---->| 1 |--------+ +-------| 1 |<-- EX/MEM
+ MEM/WB ---->| 2 | | | | 2 |<-- MEM/WB
+ +---+ | | +---+
+ v v
+ +----------+
+ | ALU |
+ +----------+
 ```
 
 ### Forwarding Conditions & Boolean Logic:
@@ -106,23 +106,23 @@ Instead of waiting for `add` to reach Writeback, we can build dedicated **Bypass
 If the instruction in `EX/MEM` writes to a register (`RegWrite == 1`), that register is not `x0`, and its destination `rd` matches the source register `rs1` or `rs2` of the instruction currently in `EX`:
 ```systemverilog
 if (ex_mem_regwrite && (ex_mem_rd != 5'b0) && (ex_mem_rd == id_ex_rs1))
-    forward_a = 2'b10; // Forward from EX/MEM stage
+ forward_a = 2'b10; // Forward from EX/MEM stage
 
 if (ex_mem_regwrite && (ex_mem_rd != 5'b0) && (ex_mem_rd == id_ex_rs2))
-    forward_b = 2'b10; // Forward from EX/MEM stage
+ forward_b = 2'b10; // Forward from EX/MEM stage
 ```
 
 #### 2. MEM/WB Hazard (Forward from instruction 2 cycles ago):
 ```systemverilog
 if (mem_wb_regwrite && (mem_wb_rd != 5'b0) && 
-    !(ex_mem_regwrite && (ex_mem_rd != 5'b0) && (ex_mem_rd == id_ex_rs1)) &&
-    (mem_wb_rd == id_ex_rs1))
-    forward_a = 2'b01; // Forward from MEM/WB stage
+ !(ex_mem_regwrite && (ex_mem_rd != 5'b0) && (ex_mem_rd == id_ex_rs1)) &&
+ (mem_wb_rd == id_ex_rs1))
+ forward_a = 2'b01; // Forward from MEM/WB stage
 
 if (mem_wb_regwrite && (mem_wb_rd != 5'b0) && 
-    !(ex_mem_regwrite && (ex_mem_rd != 5'b0) && (ex_mem_rd == id_ex_rs2)) &&
-    (mem_wb_rd == id_ex_rs2))
-    forward_b = 2'b01; // Forward from MEM/WB stage
+ !(ex_mem_regwrite && (ex_mem_rd != 5'b0) && (ex_mem_rd == id_ex_rs2)) &&
+ (mem_wb_rd == id_ex_rs2))
+ forward_b = 2'b01; // Forward from MEM/WB stage
 ```
 
 ---
@@ -134,20 +134,20 @@ Can forwarding solve *every* data hazard?
 
 Look at this sequence:
 ```assembly
-lw  x1, 0(x2)     # Load word from memory into x1
-add x4, x1, x3    # Immediately use x1!
+lw x1, 0(x2) # Load word from memory into x1
+add x4, x1, x3 # Immediately use x1!
 ```
 
 ```
-Clock Cycle:       1    2    3    4    5    6
+Clock Cycle: 1 2 3 4 5 6
 ------------------------------------------------
-lw  x1, 0(x2):    [IF] [ID] [EX] [MEM] [WB]
-                                    |
-                                    Data arrives from RAM here! (Cycle 4)
-                                    |
-add x4, x1, x3:        [IF] [ID]  [EX]  [MEM] [WB]
-                                    ^
-                                    Needs data at START of Cycle 4!
+lw x1, 0(x2): [IF] [ID] [EX] [MEM] [WB]
+ |
+ Data arrives from RAM here! (Cycle 4)
+ |
+add x4, x1, x3: [IF] [ID] [EX] [MEM] [WB]
+ ^
+ Needs data at START of Cycle 4!
 ```
 
 Data from a `LW` instruction is only retrieved from RAM at the **end of Stage 4 (MEM)**.
@@ -159,7 +159,7 @@ Even with a forwarding wire, the data does not physically exist yet!
 The **Hazard Detection Unit** detects this specific scenario:
 ```systemverilog
 assign load_use_hazard = id_ex_memread && 
-                         ((id_ex_rd == if_id_rs1) || (id_ex_rd == if_id_rs2));
+ ((id_ex_rd == if_id_rs1) || (id_ex_rd == if_id_rs2));
 ```
 
 When `load_use_hazard == 1`, the hardware automatically does three things for **1 clock cycle**:
@@ -171,11 +171,11 @@ When `load_use_hazard == 1`, the hardware automatically does three things for **
 After this 1-cycle pause, `lw` has advanced to the `MEM` stage. The loaded data is now available to be forwarded directly into the ALU input!
 
 ```
-Cycle 1:  [lw IF]
-Cycle 2:  [lw ID]   [add IF]
-Cycle 3:  [lw EX]   [add ID]  <-- HAZARD DETECTED! FREEZE PC & IF/ID!
-Cycle 4:  [lw MEM]  [BUBBLE]  [add ID (frozen)]
-Cycle 5:  [lw WB]   [add EX]  <-- Forwarded from MEM/WB to EX! Execution continues!
+Cycle 1: [lw IF]
+Cycle 2: [lw ID] [add IF]
+Cycle 3: [lw EX] [add ID] <-- HAZARD DETECTED! FREEZE PC & IF/ID!
+Cycle 4: [lw MEM] [BUBBLE] [add ID (frozen)]
+Cycle 5: [lw WB] [add EX] <-- Forwarded from MEM/WB to EX! Execution continues!
 ```
 
 ---
@@ -196,8 +196,8 @@ The instructions that were fetched into `IF/ID` and `ID/EX` are invalid and must
 
 ```
 Misprediction Recovery Action:
-1. Assert if_id_flush  = 1 (Clears IF/ID into a NOP)
-2. Assert id_ex_flush   = 1 (Clears ID/EX into a NOP)
+1. Assert if_id_flush = 1 (Clears IF/ID into a NOP)
+2. Assert id_ex_flush = 1 (Clears ID/EX into a NOP)
 3. Update PC <= branch_target_address
 ```
 
@@ -207,4 +207,4 @@ The pipeline throws away the 2 incorrectly fetched instructions in a single cloc
 
 ## Next Steps
 Now that we have designed the complete 5-stage RV32I Core with full hazard recovery, we need to connect it to memory and peripherals using the industry-standard **AMBA AXI Bus**:
-👉 [[01_AMBA_AXI4_Lite_Protocol_Deep_Dive|Proceed to Pillar 2: AMBA AXI4-Lite Protocol Deep Dive]]
+ [[01_AMBA_AXI4_Lite_Protocol_Deep_Dive|Proceed to Pillar 2: AMBA AXI4-Lite Protocol Deep Dive]]

@@ -1,15 +1,15 @@
 ---
 title: "Computer Engineering From Absolute Zero: The Intuitive Foundation"
 tags:
-  - foundations
-  - beginners-guide
-  - digital-logic
-  - microarchitecture
+ - foundations
+ - beginners-guide
+ - digital-logic
+ - microarchitecture
 date_created: 2026-09-10
 status: "Completed"
 ---
 
-# 👶 Computer Engineering From Absolute Zero
+# Computer Engineering From Absolute Zero
 
 > [!TIP] **Goal of this Note**
 > If you have never taken a single class in Computer Engineering, Electrical Engineering, or Digital Logic, this note will build your mental model from scratch. By the time you finish reading this, every term in modern computer chip design—from **Clock Cycles** and **Flip-Flops** to **Pipelines**, **Buses**, and **UVM Testbenches**—will make complete intuitive sense.
@@ -42,11 +42,11 @@ Instead of a human physically flicking a switch, a computer uses a **Transistor*
 If you connect switches in series or in parallel, you can build logical decisions:
 
 1. **AND Gate**: Two switches in series. Electricity only flows if Switch A **AND** Switch B are closed.
-   $$Y = A \cdot B$$
+ $$Y = A \cdot B$$
 2. **OR Gate**: Two switches in parallel. Electricity flows if Switch A **OR** Switch B (or both) are closed.
-   $$Y = A + B$$
+ $$Y = A + B$$
 3. **NOT Gate (Inverter)**: If input is `1`, output is `0`. If input is `0`, output is `1`.
-   $$Y = \overline{A}$$
+ $$Y = \overline{A}$$
 4. **XOR Gate (Exclusive OR)**: Output is `1` if the inputs are *different* ($1$ and $0$, or $0$ and $1$). If both are the same, output is `0`. This is the fundamental heart of addition!
 
 ### How 1s and 0s Do Math
@@ -72,13 +72,13 @@ Every rower pulls their oar forward on the beat.
 
 ```
 Voltage
-  ^
-  |      +------+      +------+      +------+
-1 |      |      |      |      |      |      |
-  |      |      |      |      |      |      |
-0 +------+      +------+      +------+      +------> Time
-      Posedge        Posedge        Posedge
-      (Clock Beat)   (Clock Beat)   (Clock Beat)
+ ^
+ | +------+ +------+ +------+
+1 | | | | | | |
+ | | | | | | |
+0 +------+ +------+ +------+ +------> Time
+ Posedge Posedge Posedge
+ (Clock Beat) (Clock Beat) (Clock Beat)
 ```
 
 - **Clock Cycle**: The time between one rising edge ("beat") and the next.
@@ -99,8 +99,8 @@ In hardware design, every piece of silicon falls into one of two categories:
 - Remembers information across clock cycles.
 - The fundamental storage cell is called a **D Flip-Flop (D-FF)** or **Register**.
 - Think of a D Flip-Flop as a tiny vault with a door:
-  - While the clock is low, the door is closed.
-  - Exactly on the clock's rising edge ($\uparrow$), the door snaps open for a picosecond, samples the input value ($D$), snaps shut, and holds that value at its output ($Q$) until the *next* clock beat.
+ - While the clock is low, the door is closed.
+ - Exactly on the clock's rising edge ($\uparrow$), the door snaps open for a picosecond, samples the input value ($D$), snaps shut, and holds that value at its output ($Q$) until the *next* clock beat.
 
 ---
 
@@ -161,8 +161,8 @@ If you connected individual dedicated wires between every single pin of City Hal
 Instead, chips use a shared highway system called a **Bus** (specifically **AMBA AXI**):
 - A set of standardized wires where devices send requests and data.
 - It operates like a registered courier postal service:
-  - "Here is an envelope addressed to memory address `0x4000_0000` with 4 bytes of data."
-  - The destination replies: "Package received successfully (`OKAY`)."
+ - "Here is an envelope addressed to memory address `0x4000_0000` with 4 bytes of data."
+ - The destination replies: "Package received successfully (`OKAY`)."
 
 ---
 
@@ -215,4 +215,4 @@ That is why **Design Verification (DV)** engineers are so heavily prized and hig
 
 ## Next Steps
 Now that you have the complete mental picture, let's look at the exact architectural blueprint of the chip you are building:
-👉 [[02_Executive_System_Architecture|Proceed to Executive System Architecture]]
+ [[02_Executive_System_Architecture|Proceed to Executive System Architecture]]

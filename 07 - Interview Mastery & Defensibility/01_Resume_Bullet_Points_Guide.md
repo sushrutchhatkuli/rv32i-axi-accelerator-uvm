@@ -1,16 +1,16 @@
 ---
 title: "Top 1% Silicon Architecture & DV Resume Bullet Points Guide"
 tags:
-  - career
-  - resume
-  - silicon-interview
-  - dv-engineer
-  - asic-engineer
+ - career
+ - resume
+ - silicon-interview
+ - dv-engineer
+ - asic-engineer
 date_created: 2026-09-10
 status: "Completed"
 ---
 
-# 📄 Top 1% Silicon Architecture & DV Resume Bullet Points Guide
+# Top 1% Silicon Architecture & DV Resume Bullet Points Guide
 
 > [!TIP] **How Recruiters and Hiring Managers at Apple, NVIDIA & ARM Screen Resumes**
 > Silicon engineering hiring managers review hundreds of university resumes. Most say generic things like:
@@ -74,4 +74,4 @@ When posting this project on your LinkedIn, GitHub, or personal portfolio websit
 
 ## Next Steps
 Now that your resume highlights the project with elite terminology, prepare to answer every technical question the interviewers will throw at you:
-👉 [[02_Silicon_Interview_QA_Mastery|Proceed to Silicon Interview Q&A Mastery]]
+ [[02_Silicon_Interview_QA_Mastery|Proceed to Silicon Interview Q&A Mastery]]
