@@ -1,0 +1,38 @@
+# EDA Simulator Builds & Waveform Dumps
+sim_build/
+work/
+transcript
+*.vcd
+*.fst
+*.wlf
+*.log
+*.key
+*.jou
+*.pb
+DVEfiles/
+urgReport/
+novas*
+*.fsdb
+verilator/
+obj_dir/
+
+# C / Bare-metal Build Artifacts
+*.o
+*.elf
+*.bin
+*.hex
+*.asm
+*.d
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Obsidian Local Workspace Cache (Keep plugins/themes, ignore local UI state)
+.obsidian/workspace*
+.obsidian/graph.json
+Custom Accelerator + AXI Bus and UVM & SystemVerilog (Verification)/
+
+# OS Artifacts
+Thumbs.db
+.DS_Store
