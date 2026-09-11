@@ -94,13 +94,6 @@ flowchart TB
 
 ---
 
-### Career, Resume & Silicon Interview Defensibility
-- [[01_Resume_Bullet_Points_Guide| Resume Bullet Points for Top Silicon Roles]]: Quantifiable, metrics-driven bullet points for Apple, NVIDIA, Qualcomm, AMD, and ARM.
-- [[02_Silicon_Interview_QA_Mastery| Silicon Architecture & DV Technical Interview Master Guide]]: 40+ rigorous questions with model answers.
-- [[03_Architecture_Tradeoffs_Whitepaper| Architectural Trade-offs & Engineering Justifications]]: PPA (Power, Performance, Area), bus latency, systolic vs. SIMD.
-
----
-
 ## Milestone Execution Tracker
 
 | Phase | Module | Milestone Goal | Verification Gate | Status |

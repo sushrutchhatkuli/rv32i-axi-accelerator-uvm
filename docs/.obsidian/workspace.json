@@ -1,0 +1,237 @@
+{
+  "main": {
+    "id": "8910f70052e0cc98",
+    "type": "split",
+    "children": [
+      {
+        "id": "02a03a1db0d8f201",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "beee7e7029f301f6",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
+            }
+          }
+        ]
+      },
+      {
+        "id": "f4de9a1208b24fc7",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "4cff87612367a295",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "39816198ba3cc0a9",
+    "type": "split",
+    "children": [
+      {
+        "id": "7c644088320489fa",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1fa85bba6d1697a5",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "374f44ce286492b3",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "4de0f6db4c124928",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "38f3b5adb043b9cf",
+    "type": "split",
+    "children": [
+      {
+        "id": "c3504bf719129d53",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8bd4cff42b094733",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "f96db406c8915b2f",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "bd513a9a5083e2e4",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "16941cd99b8c6931",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "41cc8e8faa18cbce",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "4cff87612367a295",
+  "lastOpenFiles": [
+    "07 - Interview Mastery & Defensibility/03_Architecture_Tradeoffs_Whitepaper.md",
+    "07 - Interview Mastery & Defensibility/02_Silicon_Interview_QA_Mastery.md",
+    "07 - Interview Mastery & Defensibility/01_Resume_Bullet_Points_Guide.md",
+    "06 - Toolchain & Simulation Labs/02_Simulation_Scripts_and_Makefiles.md",
+    "06 - Toolchain & Simulation Labs/01_Toolchain_Setup_and_Installation.md",
+    "05 - Step-by-Step Execution Plan/03_Phase_3_UVM_Verification_Implementation.md",
+    "05 - Step-by-Step Execution Plan/02_Phase_2_AXI_and_Accelerator_Implementation.md",
+    "05 - Step-by-Step Execution Plan/01_Phase_1_RISCV_Core_Implementation.md",
+    "04 - SystemVerilog & UVM Verification/05_Functional_Coverage_and_Closure.md",
+    "04 - SystemVerilog & UVM Verification/04_Scoreboard_and_DPI_C_Golden_Model.md",
+    "04 - SystemVerilog & UVM Verification/03_UVM_Hierarchy_and_Components.md",
+    "04 - SystemVerilog & UVM Verification/02_SystemVerilog_Interfaces_and_SVA.md",
+    "04 - SystemVerilog & UVM Verification/01_Verification_Fundamentals_Zero_To_Hero.md",
+    "03 - Custom Compute Accelerator/02_Accelerator_Datapath_and_FSM.md",
+    "03 - Custom Compute Accelerator/01_Custom_Compute_Accelerator_Concepts.md",
+    "02 - AMBA AXI Interconnect/02_AXI4_Lite_Master_and_Slave_Design.md",
+    "02 - AMBA AXI Interconnect/01_AMBA_AXI4_Lite_Protocol_Deep_Dive.md",
+    "01 - Architecture & RTL/03_Hazards_Forwarding_and_Branch_Prediction.md",
+    "01 - Architecture & RTL/02_Five_Stage_Pipelined_Core.md",
+    "01 - Architecture & RTL/01_RISCV_RV32I_Architecture.md",
+    "00 - Foundations & Orientation/02_Executive_System_Architecture.md",
+    "00 - Foundations & Orientation/01_Computer_Engineering_Zero_To_Hero.md",
+    "00 - Foundations & Orientation/00_MOC_Master_Dashboard.md",
+    "07 - Interview Mastery & Defensibility",
+    "06 - Toolchain & Simulation Labs",
+    "05 - Step-by-Step Execution Plan",
+    "04 - SystemVerilog & UVM Verification",
+    "03 - Custom Compute Accelerator",
+    "02 - AMBA AXI Interconnect",
+    "01 - Architecture & RTL",
+    "00 - Foundations & Orientation",
+    "assets/system_architecture.png",
+    "assets",
+    "Welcome.md"
+  ]
+}

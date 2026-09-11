@@ -14,25 +14,25 @@ The system integrates a synthesizable **5-stage pipelined RV32I RISC-V Core** wi
 
 ## Executive System Architecture
 
-![Executive System Architecture](assets/system_architecture.png)
+![Executive System Architecture](docs/assets/system_architecture.png)
 
 ```mermaid
 flowchart TB
- subgraph DUT["System-on-Chip (DUT)"]
- CPU["5-Stage Pipelined RISC-V Core (RV32I)"] -->|"Memory Transaction"| AXI_M["AXI4 Master Interface"]
- AXI_M -->|"5 Channels (AW, W, B, AR, R)"| BUS["AXI4-Lite Interconnect"]
- BUS -->|"0x0000_0000 - 0x2000_FFFF"| RAM["Instruction & Data RAM Controller"]
- BUS -->|"0x4000_0000 - 0x4000_07FF"| ACC["Custom Compute Accelerator (MAC / Systolic)"]
- ACC -.->|"Hardware Interrupt (IRQ)"| CPU
- end
+    subgraph DUT["System-on-Chip (DUT)"]
+        CPU["5-Stage Pipelined RISC-V Core (RV32I)"] -->|"Memory Transaction"| AXI_M["AXI4 Master Interface"]
+        AXI_M -->|"5 Channels (AW, W, B, AR, R)"| BUS["AXI4-Lite Interconnect"]
+        BUS -->|"0x0000_0000 - 0x2000_FFFF"| RAM["Instruction & Data RAM Controller"]
+        BUS -->|"0x4000_0000 - 0x4000_07FF"| ACC["Custom Compute Accelerator (MAC / Systolic)"]
+        ACC -.->|"Hardware Interrupt (IRQ)"| CPU
+    end
 
- subgraph UVM["UVM Verification Environment (IEEE 1800.2)"]
- SEQ["UVM Sequence\n(Constrained Random)"] --> DRV["UVM Driver"]
- DRV -->|"Virtual Interface"| DUT
- DUT -->|"Virtual Interface"| MON["UVM Monitor"]
- MON -->|"Analysis Port"| SCB["UVM Scoreboard\n(Golden C++ DPI Model)"]
- MON -->|"Analysis Port"| COV["Functional Coverage\n& SVA Assertions"]
- end
+    subgraph UVM["UVM Verification Environment (IEEE 1800.2)"]
+        SEQ["UVM Sequence\n(Constrained Random)"] --> DRV["UVM Driver"]
+        DRV -->|"Virtual Interface"| DUT
+        DUT -->|"Virtual Interface"| MON["UVM Monitor"]
+        MON -->|"Analysis Port"| SCB["UVM Scoreboard\n(Golden C++ DPI Model)"]
+        MON -->|"Analysis Port"| COV["Functional Coverage\n& SVA Assertions"]
+    end
 ```
 
 ---
@@ -67,32 +67,39 @@ flowchart TB
 
 ```
 .
-├── rtl/ # Synthesizable Hardware Silicon Code
-│ ├── core/ # 5-stage RV32I Processor RTL
-│ ├── bus/ # AMBA AXI4-Lite Master, Slave & Interconnect
-│ ├── accel/ # Custom 4-MAC Accelerator & CSRs
-│ └── top/ # Top-level SoC wrapper (soc_top.sv)
-├── verif/ # UVM Verification Environment
-│ ├── tb/ # Parameterized interfaces (axi_if.sv) & tb_top.sv
-│ ├── seq/ # UVM sequence items and constrained-random sequences
-│ ├── agent/ # UVM drivers, monitors, and sequencers
-│ ├── scb/ # UVM scoreboard and golden_accel.cpp (DPI-C)
-│ ├── cov/ # Functional coverage subscriber & covergroups
-│ ├── env/ # UVM environment class
-│ └── tests/ # UVM test library
-├── firmware/ # Bare-metal C programs & Linker scripts
-├── scripts/ # Automation Makefiles & Python regression runners
-├── assets/ # Architecture diagrams and figures
-└── 00 - Foundations... # Complete Obsidian Knowledge Vault
+├── docs/                       # Complete Obsidian Engineering Vault & Documentation
+│   ├── 00 - Foundations & Orientation/
+│   ├── 01 - Architecture & RTL/
+│   ├── 02 - AMBA AXI Interconnect/
+│   ├── 03 - Custom Compute Accelerator/
+│   ├── 04 - SystemVerilog & UVM Verification/
+│   ├── 05 - Step-by-Step Execution Plan/
+│   ├── 06 - Toolchain & Simulation Labs/
+│   └── assets/
+├── rtl/                        # Synthesizable Hardware Silicon Code
+│   ├── core/                   # 5-stage RV32I Processor RTL
+│   ├── bus/                    # AMBA AXI4-Lite Master, Slave & Interconnect
+│   ├── accel/                  # Custom 4-MAC Accelerator & CSRs
+│   └── top/                    # Top-level SoC wrapper (soc_top.sv)
+├── verif/                      # UVM Verification Environment
+│   ├── tb/                     # Parameterized interfaces (axi_if.sv) & testbenches
+│   ├── seq/                    # UVM sequence items and constrained-random sequences
+│   ├── agent/                  # UVM drivers, monitors, and sequencers
+│   ├── scb/                    # UVM scoreboard and golden_accel.cpp (DPI-C)
+│   ├── cov/                    # Functional coverage subscriber & covergroups
+│   ├── env/                    # UVM environment class
+│   └── tests/                  # UVM test library
+├── firmware/                   # Bare-metal C programs & Linker scripts
+└── scripts/                    # Automation Makefiles & Python regression runners
 ```
 
 ---
 
-## Obsidian Engineering Vault
+## Documentation & Obsidian Vault
 
-This repository contains an interconnected **Obsidian Knowledge Vault** in the root directory:
-- Open this project folder in **Obsidian** to explore 20+ interconnected technical notes, visual graphs, and zero-to-hero guides.
-- Start at [`00 - Foundations & Orientation/00_MOC_Master_Dashboard.md`](00%20-%20Foundations%20&%20Orientation/00_MOC_Master_Dashboard.md).
+All detailed engineering guides, theory, and hardware blueprints are organized inside the `docs/` folder:
+- Open the `docs/` folder in **Obsidian** to explore the interconnected technical notes and visual architecture maps.
+- Master Dashboard: [`docs/00 - Foundations & Orientation/00_MOC_Master_Dashboard.md`](docs/00%20-%20Foundations%20&%20Orientation/00_MOC_Master_Dashboard.md).
 
 ---
 
