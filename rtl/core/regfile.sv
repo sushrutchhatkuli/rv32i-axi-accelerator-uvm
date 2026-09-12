@@ -29,9 +29,16 @@ module regfile (
     // 32 registers, each 32 bits wide
     logic [31:0] registers [31:0];
 
-    // Asynchronous Read Logic (x0 is permanently 0)
-    assign rs1_data = (rs1_addr == 5'd0) ? 32'd0 : registers[rs1_addr];
-    assign rs2_data = (rs2_addr == 5'd0) ? 32'd0 : registers[rs2_addr];
+    // Asynchronous Read Logic with Internal Write-Through Bypass
+    // If an instruction in WB writes to a register at the same time an instruction in ID reads it,
+    // forward the written data immediately. Register x0 is permanently 0.
+    assign rs1_data = (rs1_addr == 5'd0) ? 32'd0 :
+                      (we && (rd_addr == rs1_addr)) ? rd_data :
+                      registers[rs1_addr];
+
+    assign rs2_data = (rs2_addr == 5'd0) ? 32'd0 :
+                      (we && (rd_addr == rs2_addr)) ? rd_data :
+                      registers[rs2_addr];
 
     // Synchronous Write Logic
     always_ff @(posedge clk or negedge rst_n) begin
