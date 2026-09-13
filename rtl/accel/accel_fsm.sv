@@ -189,12 +189,7 @@ module accel_fsm (
                     if (irq_en) begin
                         irq <= 1'b1;
                     end
-
-                    if (start) begin
-                        done  <= 1'b0;
-                        irq   <= 1'b0;
-                        state <= ST_IDLE;
-                    end
+                    state <= ST_IDLE;
                 end
 
                 default: state <= ST_IDLE;
