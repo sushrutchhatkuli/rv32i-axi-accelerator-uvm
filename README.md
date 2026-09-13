@@ -4,11 +4,13 @@
 [![UVM](https://img.shields.io/badge/UVM-IEEE--1800.2-brightgreen.svg)](https://standards.ieee.org/ieee/1800.2/7140/)
 [![ISA](https://img.shields.io/badge/ISA-RISC--V%20RV32I-red.svg)](https://riscv.org/technical/specifications/)
 [![Interconnect](https://img.shields.io/badge/Bus-AMBA%20AXI4--Lite-orange.svg)](https://developer.arm.com/architectures/system-architectures/amba)
+[![Firmware](https://img.shields.io/badge/Firmware-Bare--Metal%20C%20%2F%20ASM-success.svg)](firmware/)
+[![Regression](https://img.shields.io/badge/Regression-104%2F104%20Pass%20(100%25)-darkgreen.svg)](scripts/run_regression.py)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
-An industrial-grade **Heterogeneous System-on-Chip (SoC)** and **Constrained-Random UVM Verification Environment** designed from scratch in SystemVerilog.
+An industrial-grade **Heterogeneous System-on-Chip (SoC)**, **Bare-Metal Firmware Driver Stack**, and **Constrained-Random UVM Verification Environment** designed from scratch in SystemVerilog.
 
-The system integrates a synthesizable **5-stage pipelined RV32I RISC-V Core** with a **Domain-Specific Hardware Accelerator (4-MAC Matrix Engine)** over an industry-standard **AMBA AXI4-Lite interconnect**, verified using an automated **IEEE 1800.2 UVM testbench** powered by a **C++ DPI-C Golden Predictor**.
+The system integrates a synthesizable **5-stage pipelined RV32I RISC-V Core** with a **Domain-Specific Hardware Accelerator (4-MAC Matrix Engine)** over an industry-standard **AMBA AXI4-Lite interconnect**. It features autonomous **bare-metal C and assembly firmware** that boots and orchestrates matrix multiplication directly on silicon, verified using an automated **IEEE 1800.2 UVM testbench** powered by a **C++ DPI-C Golden Predictor** and an automated **104-assertion CI/CD regression suite**.
 
 ---
 
