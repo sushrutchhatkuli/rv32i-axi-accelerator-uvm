@@ -21,6 +21,7 @@ obj_dir/
 *.elf
 *.bin
 *.hex
+!firmware/*.hex
 *.asm
 *.d
 

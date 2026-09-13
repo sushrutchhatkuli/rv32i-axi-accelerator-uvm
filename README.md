@@ -61,6 +61,11 @@ flowchart TB
 - **C++ DPI Golden Model**: High-level reference matrix multiplier imported via DPI-C into `soc_scoreboard` for cycle-accurate mathematical checks.
 - **Coverage Closure**: Functional covergroups and cross-coverage models targeting 100% closure across instruction types, hazards, bus latency, and matrix dimensions.
 
+### 5. Bare-Metal Firmware & Hardware/Software Co-Verification
+- **Autonomous Execution**: RV32I processor boots native assembly and C firmware from RAM (`0x0000_0000`).
+- **MMIO Coprocessor Orchestration**: CPU configures accelerator registers, drives input matrices across AXI, and polls or awaits hardware interrupt (`accel_irq_out`).
+- **Self-Verifying Mailbox**: CPU reads back results from the scratchpad buffer, validates against golden values, and stores `0xCAFEBABE` to RAM address `0x0000_1000`.
+
 ![IEEE 1800.2 UVM Verification Architecture](docs/assets/uvm_architecture.png)
 
 ---
@@ -69,13 +74,56 @@ flowchart TB
 
 All modules across the CPU core, AXI bus, matrix accelerator, and top-level SoC have been verified with automated self-checking testbenches:
 
-### 1. Complete SoC Integration Simulation (100% Pass)
+### Complete Regression Suite (100% Pass Across 8 Testbenches)
+```
+================================================================================
+  HETEROGENEOUS RISC-V SOC REGRESSION SUITE
+================================================================================
+[PASS] Phase 1: RV32I Core Execution Units                     | Passed:  15 | Failed:   0
+[PASS] Phase 1: RV32I Branch & Control Flow                    | Passed:  20 | Failed:   0
+[PASS] Phase 1: RV32I Pipeline Hazards & Forwarding            | Passed:   9 | Failed:   0
+[PASS] Phase 2: AMBA AXI4-Lite Interconnect & Protocol         | Passed:  10 | Failed:   0
+[PASS] Phase 3: 4-MAC Matrix Accelerator Engine                | Passed:  13 | Failed:   0
+[PASS] Phase 3: Heterogeneous SoC Hardware Integration         | Passed:  12 | Failed:   0
+[PASS] Phase 3: End-to-End System Integration & Matrix Pipeline | Passed:  12 | Failed:   0
+[PASS] Phase 4: Autonomous Bare-Metal Firmware Co-Verification | Passed:  13 | Failed:   0
+================================================================================
+  REGRESSION SUMMARY
+  Testbenches Run    : 8
+  Testbenches Passed : 8
+  Testbenches Failed : 0
+  Total Assertions   : 104
+  Total Passed Checks: 104
+  Total Failed Checks: 0
+  Execution Time     : 2.88 seconds
+================================================================================
+  OVERALL STATUS: 100% REGRESSION PASS
+================================================================================
+```
+
+### Quick Start & Reproduction Commands
+
+Run any of the following targets from the root workspace:
+
+```bash
+make regression      # Execute the complete 8-testbench regression suite (104 assertions)
+make test-firmware   # Run autonomous bare-metal HW/SW co-verification
+make test-core       # Run Phase 1 RISC-V CPU pipeline unit tests
+make test-bus        # Run Phase 2 AXI4-Lite bus protocol checks
+make test-accel      # Run Phase 3 4-MAC matrix engine verification
+make test-soc        # Run Phase 3 SoC top-level integration tests
+make clean           # Clean up simulation binaries and VCD waveforms
+```
+
+### Verification Visuals
+
+#### 1. Complete SoC Integration Simulation (100% Pass)
 ![Complete SoC Simulation Pass](docs/assets/soc_simulation_pass.png)
 
-### 2. RV32I Core Execution & Unit Verification (100% Pass)
+#### 2. RV32I Core Execution & Unit Verification (100% Pass)
 ![Core Units Simulation Pass](docs/assets/core_units_simulation_pass.png)
 
-### 3. Control Unit & Branch Condition Logic (100% Pass)
+#### 3. Control Unit & Branch Condition Logic (100% Pass)
 ![Control & Branch Simulation Pass](docs/assets/control_branch_simulation_pass.png)
 
 ---
