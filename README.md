@@ -61,6 +61,23 @@ flowchart TB
 - **C++ DPI Golden Model**: High-level reference matrix multiplier imported via DPI-C into `soc_scoreboard` for cycle-accurate mathematical checks.
 - **Coverage Closure**: Functional covergroups and cross-coverage models targeting 100% closure across instruction types, hazards, bus latency, and matrix dimensions.
 
+![IEEE 1800.2 UVM Verification Architecture](docs/assets/uvm_architecture.png)
+
+---
+
+## Hardware Simulation & Verification Scorecard
+
+All modules across the CPU core, AXI bus, matrix accelerator, and top-level SoC have been verified with automated self-checking testbenches:
+
+### 1. Complete SoC Integration Simulation (100% Pass)
+![Complete SoC Simulation Pass](docs/assets/soc_simulation_pass.png)
+
+### 2. RV32I Core Execution & Unit Verification (100% Pass)
+![Core Units Simulation Pass](docs/assets/core_units_simulation_pass.png)
+
+### 3. Control Unit & Branch Condition Logic (100% Pass)
+![Control & Branch Simulation Pass](docs/assets/control_branch_simulation_pass.png)
+
 ---
 
 ## Repository Directory Structure

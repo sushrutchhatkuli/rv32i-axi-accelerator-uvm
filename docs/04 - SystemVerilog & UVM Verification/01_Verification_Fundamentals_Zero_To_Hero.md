@@ -21,6 +21,8 @@ status: "Completed"
 >
 > That is why **70% of all engineering effort and budget in semiconductor companies is spent on Verification**!
 
+![IEEE 1800.2 UVM Architecture](../assets/uvm_architecture.png)
+
 ---
 
 ## 1. The Death of Directed Testing

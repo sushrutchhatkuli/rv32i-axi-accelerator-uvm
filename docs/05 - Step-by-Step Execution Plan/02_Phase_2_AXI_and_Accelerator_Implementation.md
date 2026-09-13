@@ -94,6 +94,8 @@ Your Phase 2 is complete when:
 3. The custom accelerator calculates a $4 \times 4$ matrix multiplication in hardware and asserts its `irq` pin.
 4. The C program successfully reads back the correct mathematical output from the accelerator buffer!
 
+![Full SoC Simulation Pass](../assets/soc_simulation_pass.png)
+
 ---
 
 ## Next Steps

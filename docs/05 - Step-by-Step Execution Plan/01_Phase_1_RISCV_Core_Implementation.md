@@ -93,6 +93,9 @@ Your Phase 1 is complete when:
 3. Branch taken flushes exactly 2 instructions and jumps to the target address.
 4. All 32 general-purpose registers update with mathematically correct answers.
 
+![Core Units Simulation Pass](../assets/core_units_simulation_pass.png)
+![Control & Branch Simulation Pass](../assets/control_branch_simulation_pass.png)
+
 ---
 
 ## Next Steps
