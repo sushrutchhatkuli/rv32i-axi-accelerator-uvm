@@ -128,8 +128,10 @@ Run any of the following targets from the root workspace:
 ```bash
 make regression      # Execute the complete 9-testbench regression suite (114 assertions)
 make synth           # Run physical ASIC synthesis with Yosys (76.8k gates)
-make test-firmware   # Run autonomous bare-metal HW/SW co-verification
+make view-cpu        # Interactive step-by-step CPU pipeline & coprocessor visualizer
+make wave            # Open cycle-accurate waveforms in GTKWave digital oscilloscope
 make test-tiled      # Run 4x4 Tiled Block GEMM HW/SW co-verification
+make test-firmware   # Run autonomous bare-metal HW/SW co-verification
 make test-core       # Run Phase 1 RISC-V CPU pipeline unit tests
 make test-bus        # Run Phase 2 AXI4-Lite bus protocol checks
 make test-accel      # Run Phase 3 4-MAC matrix engine verification
@@ -153,6 +155,21 @@ make clean           # Clean up simulation binaries and VCD waveforms
 
 #### 5. 4x4 Tiled Block GEMM Hardware/Software Co-Verification (100% Pass)
 ![4x4 Tiled GEMM Simulation Pass](docs/assets/tiled_gemm_simulation_pass.png)
+
+#### 6. Cycle-Accurate Silicon Waveform Trace (GTKWave Digital Oscilloscope)
+![GTKWave Waveform Oscilloscope Trace](docs/assets/gtkwave_tiled_gemm_waveform.png)
+
+Inspect the full 16,280 ns cycle-accurate timeline with pre-loaded signals:
+```bash
+make wave
+# Or directly via: gtkwave soc_tiled_gemm_trace.vcd soc_tiled_gemm.gtkw
+```
+
+**Waveform Analysis Breakdown**:
+1. **8 Hardware Coprocessor Cycles (`accel_irq_out` & `done`)**: Exactly 8 wide square pulses mark the completion of each 2x2 matrix tile computation, asserting hardware interrupts back to the CPU.
+2. **AMBA AXI4-Lite Bus Highway**: 8 dense bursts of `s1_axi_awvalid`/`s1_axi_awready` handshakes, `s1_axi_wdata` matrix streaming, and `s1_axi_rdata` partial-product readbacks.
+3. **Instruction Fetch & Program Counter (`imem_addr` & `imem_rdata`)**: Continuous progression across 434 assembled RISC-V instructions without stalls or corruptions.
+4. **Coprocessor State Machine (`state[2:0]`)**: Deterministic transitions between `000` (IDLE), input buffering, parallel 4-MAC multiplication, and done signaling.
 
 ---
 
