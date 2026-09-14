@@ -3,7 +3,7 @@
 # File: run_regression.py
 # Project: Heterogeneous RISC-V SoC with AXI4-Lite & Accelerator
 # Description: Automated CI/CD Regression Suite.
-#              Executes full test suite (11 testbenches) across all architectural
+#              Executes full test suite (12 testbenches) across all architectural
 #              phases using Icarus Verilog and vvp.
 # =============================================================================
 
@@ -46,6 +46,12 @@ TESTS = [
     {
         "name": "Phase 2: AMBA AXI4-Lite Interconnect & Protocol",
         "tb": "verif/tb/tb_axi_lite_bus.sv",
+        "includes": ["rtl/bus"],
+        "sources": ["rtl/bus/*.sv"],
+    },
+    {
+        "name": "Phase 2: Hardware Direct Memory Access (DMA) Controller",
+        "tb": "verif/tb/tb_dma_controller.sv",
         "includes": ["rtl/bus"],
         "sources": ["rtl/bus/*.sv"],
     },

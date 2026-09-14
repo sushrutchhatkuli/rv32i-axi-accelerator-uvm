@@ -104,6 +104,7 @@ flowchart TB
 | :--- | :--- | :--- | :--- | :--- |
 | **Phase 1** | **RV32I Core** | 5-stage pipelined CPU with Forwarding & Hazard Unit | 44/44 unit tests pass without stalls/corruptions | Completed |
 | **Upgrade 1** | **L1 Cache Controller** | 1 KB Direct-Mapped SRAM cache with 4-word AXI refill | 25/25 tests pass, write-through, MMIO bypass | Completed |
+| **Upgrade 2** | **Hardware DMA Engine** | Autonomous AXI Master DMA with 16-word FIFO & IRQ | 20/20 tests pass, streaming verified | Completed |
 | **Upgrade 3** | **RV32M Extension** | Hardware Multiplier & Divider (MUL/DIV/REM) in ALU | 32/32 tests pass, zero-divide & overflow compliant | Completed |
 | **Phase 2.1** | **AXI4-Lite Bus** | Master/Slave wrappers & 5-channel handshake logic | 10/10 protocol tests pass without deadlocks | Completed |
 | **Phase 2.2** | **Accelerator** | 4-MAC engine / Systolic array with Q8.8 fixed-point math | 13/13 computation & saturation checks pass | Completed |
@@ -111,8 +112,8 @@ flowchart TB
 | **Phase 3** | **UVM Environment** | Scoreboard, C++ golden predictor, functional coverage | 100% mathematical accuracy & coverage closure | Completed |
 | **Phase 4** | **Firmware & Co-Verification** | Autonomous bare-metal firmware runs on silicon datapath | 13/13 checks pass, 0xCAFEBABE in RAM mailbox | Completed |
 | **Phase 4 Ext**| **4x4 Tiled Block GEMM** | Generic block matrix partitioning over fixed 2x2 silicon | 10/10 checks pass, 8 coprocessor runs, 0xFEEDC0DE | Completed |
-| **Synthesis** | **ASIC Physical Mapping** | Yosys technology mapping to CMOS logic cells | 158,116 gates, 26,189 DFFs, 0 latches | Completed |
-| **Regression**| **CI/CD Test Suite** | Automated regression script running all 11 testbenches | 171/171 assertions pass across 11 testbenches | Completed |
+| **Synthesis** | **ASIC Physical Mapping** | Yosys technology mapping to CMOS logic cells | 161,385 gates, 27,160 DFFs, 0 latches | Completed |
+| **Regression**| **CI/CD Test Suite** | Automated regression script running all 12 testbenches | 191/191 assertions pass across 12 testbenches | Completed |
 
 ---
 *Tip: Click on any `[[Link]]` above to jump directly into the technical deep dive note.*

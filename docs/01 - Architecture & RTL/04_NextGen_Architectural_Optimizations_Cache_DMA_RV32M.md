@@ -109,6 +109,12 @@ We designed an autonomous **AXI Bus Master DMA Controller** attached to the cros
    - Completely offloads memory movement from the CPU.
    - Reduces tensor setup latency by 4x using continuous AXI bus streaming.
 
+### 3.3 Implementation & Silicon Verification Status (Completed)
+- **RTL Implementation**: Implemented synthesizable AXI4-Lite DMA Controller in [`rtl/bus/dma_controller.sv`](file:///c:/Users/sushr/Documents/Custom%20Accelerator%20+%20AXI%20Bus%20and%20UVM%20&%20SystemVerilog%20(Verification)/rtl/bus/dma_controller.sv) featuring dual AXI Master read/write FSM engines, 16-word internal circular FIFO buffer, memory-mapped CSR slave interface (`SRC_ADDR`, `DST_ADDR`, `LENGTH`, `CTRL`, `STATUS`), and hardware completion interrupt (`dma_irq_out`).
+- **Unit Verification**: Built dedicated 20-test self-checking testbench ([`verif/tb/tb_dma_controller.sv`](file:///c:/Users/sushr/Documents/Custom%20Accelerator%20+%20AXI%20Bus%20and%20UVM%20&%20SystemVerilog%20(Verification)/verif/tb/tb_dma_controller.sv)) verifying CSR write/read operations, 16-byte RAM-to-RAM block transfers, 64-byte streaming across circular FIFO boundaries, RAM-to-Accelerator buffer streaming, completion interrupt assertion, and back-to-back chained DMA transfers. 20/20 tests pass 100%.
+- **System Regression**: Added `Phase 2: Hardware Direct Memory Access (DMA) Controller` to [`scripts/run_regression.py`](file:///c:/Users/sushr/Documents/Custom%20Accelerator%20+%20AXI%20Bus%20and%20UVM%20&%20SystemVerilog%20(Verification)/scripts/run_regression.py). Full regression runs 12 testbenches with 191 assertions, passing 100%.
+- **Physical ASIC Synthesis**: Synthesized the DMA Controller with Yosys 0.33 to 3,269 CMOS standard cell gates (2,298 Combinational, 971 Sequential DFFs) with 0 latches and 0 timing loops. Total SoC logic reaches 161,385 gates.
+
 ---
 
 ## 4. Upgrade 3: Hardware Multiplier & Divider Execution Unit (RV32M)

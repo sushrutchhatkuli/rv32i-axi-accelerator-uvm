@@ -39,6 +39,12 @@ TARGETS = [
         "sources": ["rtl/bus/axi_interconnect.sv"]
     },
     {
+        "name": "Hardware Direct Memory Access (DMA) Controller",
+        "top": "dma_controller",
+        "includes": ["rtl/bus"],
+        "sources": ["rtl/bus/dma_controller.sv"]
+    },
+    {
         "name": "4-MAC Matrix Accelerator Compute Engine",
         "top": "accel_top",
         "includes": ["rtl/accel"],
