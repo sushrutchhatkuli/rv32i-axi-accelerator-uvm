@@ -77,6 +77,18 @@ def assemble(input_file, output_file):
             imm = parse_val(tokens[3])
             instr = ((imm & 0xFFF) << 20) | (rs1 << 15) | (0b110 << 12) | (rd << 7) | 0x13
 
+        elif op == 'add':
+            rd = parse_reg(tokens[1])
+            rs1 = parse_reg(tokens[2])
+            rs2 = parse_reg(tokens[3])
+            instr = (0b0000000 << 25) | (rs2 << 20) | (rs1 << 15) | (0b000 << 12) | (rd << 7) | 0x33
+
+        elif op == 'sub':
+            rd = parse_reg(tokens[1])
+            rs1 = parse_reg(tokens[2])
+            rs2 = parse_reg(tokens[3])
+            instr = (0b0100000 << 25) | (rs2 << 20) | (rs1 << 15) | (0b000 << 12) | (rd << 7) | 0x33
+
         elif op == 'addi':
             rd = parse_reg(tokens[1])
             rs1 = parse_reg(tokens[2])

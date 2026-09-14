@@ -5,13 +5,13 @@
 [![ISA](https://img.shields.io/badge/ISA-RISC--V%20RV32I-red.svg)](https://riscv.org/technical/specifications/)
 [![Interconnect](https://img.shields.io/badge/Bus-AMBA%20AXI4--Lite-orange.svg)](https://developer.arm.com/architectures/system-architectures/amba)
 [![Firmware](https://img.shields.io/badge/Firmware-Bare--Metal%20C%20%2F%20ASM-success.svg)](firmware/)
-[![Regression](https://img.shields.io/badge/Regression-104%2F104%20Pass%20(100%25)-darkgreen.svg)](scripts/run_regression.py)
+[![Regression](https://img.shields.io/badge/Regression-114%2F114%20Pass%20(100%25)-darkgreen.svg)](scripts/run_regression.py)
 [![Synthesis](https://img.shields.io/badge/ASIC%20Synthesis-76.8k%20Gates%20(Clean)-blue.svg)](scripts/run_synthesis.py)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
 An industrial-grade **Heterogeneous System-on-Chip (SoC)**, **Bare-Metal Firmware Driver Stack**, and **Constrained-Random UVM Verification Environment** designed from scratch in SystemVerilog.
 
-The system integrates a synthesizable **5-stage pipelined RV32I RISC-V Core** with a **Domain-Specific Hardware Accelerator (4-MAC Matrix Engine)** over an industry-standard **AMBA AXI4-Lite interconnect**. It features autonomous **bare-metal C and assembly firmware** that boots and orchestrates matrix multiplication directly on silicon, verified using an automated **IEEE 1800.2 UVM testbench** powered by a **C++ DPI-C Golden Predictor** and an automated **104-assertion CI/CD regression suite**.
+The system integrates a synthesizable **5-stage pipelined RV32I RISC-V Core** with a **Domain-Specific Hardware Accelerator (4-MAC Matrix Engine)** over an industry-standard **AMBA AXI4-Lite interconnect**. It features autonomous **bare-metal C and assembly firmware** that boots and orchestrates matrix multiplication directly on silicon, verified using an automated **IEEE 1800.2 UVM testbench** powered by a **C++ DPI-C Golden Predictor** and an automated **114-assertion CI/CD regression suite**.
 
 ---
 
@@ -68,6 +68,7 @@ flowchart TB
 - **Autonomous Execution**: RV32I processor boots native assembly and C firmware from RAM (`0x0000_0000`).
 - **MMIO Coprocessor Orchestration**: CPU configures accelerator registers, drives input matrices across AXI, and polls or awaits hardware interrupt (`accel_irq_out`).
 - **Self-Verifying Mailbox**: CPU reads back results from the scratchpad buffer, validates against golden values, and stores `0xCAFEBABE` to RAM address `0x0000_1000`.
+- **4x4 Tiled Block GEMM Partitioning**: Partitions generic 4x4 matrix multiplication into four 2x2 sub-blocks, streams 8 sequential passes across AXI MMIO, accumulates partial products in software registers, and writes `0xFEEDC0DE` to mailbox (`0x0000_1004`).
 
 ### 6. ASIC Physical Synthesis & Technology Mapping (Yosys)
 - **Cell Mapping**: Synthesized using Yosys 0.33 to generic standard CMOS gates (NAND, NOR, XOR, DFFE registers).
@@ -92,7 +93,7 @@ All modules across the CPU core, AXI bus, matrix accelerator, and top-level SoC 
 | **4-MAC Matrix Accelerator Compute Engine** | `accel_top` | 67,252 | 52,442 | 14,810 |
 | **TOTAL HETEROGENEOUS SOC LOGIC** | `soc_top` | **76,888** | **60,504** | **16,384** |
 
-### Complete Regression Suite (100% Pass Across 8 Testbenches)
+### Complete Regression Suite (100% Pass Across 9 Testbenches)
 ```
 ================================================================================
   HETEROGENEOUS RISC-V SOC REGRESSION SUITE
@@ -105,15 +106,16 @@ All modules across the CPU core, AXI bus, matrix accelerator, and top-level SoC 
 [PASS] Phase 3: Heterogeneous SoC Hardware Integration         | Passed:  12 | Failed:   0
 [PASS] Phase 3: End-to-End System Integration & Matrix Pipeline | Passed:  12 | Failed:   0
 [PASS] Phase 4: Autonomous Bare-Metal Firmware Co-Verification | Passed:  13 | Failed:   0
+[PASS] Phase 4: 4x4 Tiled Block GEMM Driver Co-Verification    | Passed:  10 | Failed:   0
 ================================================================================
   REGRESSION SUMMARY
-  Testbenches Run    : 8
-  Testbenches Passed : 8
+  Testbenches Run    : 9
+  Testbenches Passed : 9
   Testbenches Failed : 0
-  Total Assertions   : 104
-  Total Passed Checks: 104
+  Total Assertions   : 114
+  Total Passed Checks: 114
   Total Failed Checks: 0
-  Execution Time     : 2.88 seconds
+  Execution Time     : 1.66 seconds
 ================================================================================
   OVERALL STATUS: 100% REGRESSION PASS
 ================================================================================
@@ -124,9 +126,10 @@ All modules across the CPU core, AXI bus, matrix accelerator, and top-level SoC 
 Run any of the following targets from the root workspace:
 
 ```bash
-make regression      # Execute the complete 8-testbench regression suite (104 assertions)
+make regression      # Execute the complete 9-testbench regression suite (114 assertions)
 make synth           # Run physical ASIC synthesis with Yosys (76.8k gates)
 make test-firmware   # Run autonomous bare-metal HW/SW co-verification
+make test-tiled      # Run 4x4 Tiled Block GEMM HW/SW co-verification
 make test-core       # Run Phase 1 RISC-V CPU pipeline unit tests
 make test-bus        # Run Phase 2 AXI4-Lite bus protocol checks
 make test-accel      # Run Phase 3 4-MAC matrix engine verification
@@ -147,6 +150,9 @@ make clean           # Clean up simulation binaries and VCD waveforms
 
 #### 4. Autonomous Bare-Metal Firmware Co-Verification (100% Pass)
 ![Autonomous Firmware Simulation Pass](docs/assets/firmware_simulation_pass.png)
+
+#### 5. 4x4 Tiled Block GEMM Hardware/Software Co-Verification (100% Pass)
+![4x4 Tiled GEMM Simulation Pass](docs/assets/tiled_gemm_simulation_pass.png)
 
 ---
 

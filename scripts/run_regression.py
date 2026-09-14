@@ -61,6 +61,13 @@ TESTS = [
         "includes": ["rtl/core", "rtl/bus", "rtl/accel", "rtl/top"],
         "sources": ["rtl/core/*.sv", "rtl/bus/*.sv", "rtl/accel/*.sv", "rtl/top/*.sv"],
         "pre_cmd": ["python3", "scripts/asm_to_hex.py", "firmware/firmware.s", "firmware/firmware.hex"]
+    },
+    {
+        "name": "Phase 4: 4x4 Tiled Block GEMM Driver Co-Verification",
+        "tb": "verif/tb/tb_soc_tiled_gemm.sv",
+        "includes": ["rtl/core", "rtl/bus", "rtl/accel", "rtl/top"],
+        "sources": ["rtl/core/*.sv", "rtl/bus/*.sv", "rtl/accel/*.sv", "rtl/top/*.sv"],
+        "pre_cmd": ["python3", "scripts/asm_to_hex.py", "firmware/tiled_gemm.s", "firmware/tiled_gemm.hex"]
     }
 ]
 

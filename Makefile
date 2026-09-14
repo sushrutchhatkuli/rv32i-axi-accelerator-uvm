@@ -21,15 +21,16 @@ TOP_SRCS  = $(CORE_SRCS) $(BUS_SRCS) $(ACCEL_SRCS) $(wildcard rtl/top/*.sv)
 
 SIM_DIR = sim_build
 
-.PHONY: all regression clean firmware test-firmware test-core test-bus test-accel test-soc synth help
+.PHONY: all regression clean firmware tiled-firmware test-firmware test-tiled test-core test-bus test-accel test-soc synth help
 
 help:
 	@echo "Heterogeneous RISC-V SoC Build System"
 	@echo "Available Targets:"
-	@echo "  make regression    - Run entire 8-testbench regression suite"
+	@echo "  make regression    - Run entire 9-testbench regression suite"
 	@echo "  make synth         - Run physical ASIC synthesis with Yosys"
 	@echo "  make firmware      - Assemble assembly firmware into hex format"
 	@echo "  make test-firmware - Run autonomous HW/SW co-verification simulation"
+	@echo "  make test-tiled    - Run 4x4 Tiled Block GEMM HW/SW co-verification"
 	@echo "  make test-core     - Run Phase 1 RISC-V Core testbenches"
 	@echo "  make test-bus      - Run Phase 2 AXI4-Lite Interconnect testbench"
 	@echo "  make test-accel    - Run Phase 3 4-MAC Accelerator testbench"
@@ -42,9 +43,16 @@ $(SIM_DIR):
 firmware:
 	$(PYTHON) scripts/asm_to_hex.py firmware/firmware.s firmware/firmware.hex
 
+tiled-firmware:
+	$(PYTHON) scripts/asm_to_hex.py firmware/tiled_gemm.s firmware/tiled_gemm.hex
+
 test-firmware: $(SIM_DIR) firmware
 	$(IVERILOG) $(FLAGS) $(TOP_INCS) $(TOP_SRCS) verif/tb/tb_soc_firmware.sv -o $(SIM_DIR)/tb_soc_firmware.out
 	$(VVP) $(SIM_DIR)/tb_soc_firmware.out
+
+test-tiled: $(SIM_DIR) tiled-firmware
+	$(IVERILOG) $(FLAGS) $(TOP_INCS) $(TOP_SRCS) verif/tb/tb_soc_tiled_gemm.sv -o $(SIM_DIR)/tb_soc_tiled_gemm.out
+	$(VVP) $(SIM_DIR)/tb_soc_tiled_gemm.out
 
 test-core: $(SIM_DIR)
 	$(IVERILOG) $(FLAGS) $(CORE_INCS) $(CORE_SRCS) verif/tb/tb_core_units.sv -o $(SIM_DIR)/tb_core_units.out
