@@ -18,7 +18,7 @@ module control_unit (
     output logic       mem_read,   // 1 = Read data from memory in MEM stage (Load)
     output logic       mem_write,  // 1 = Write data to memory in MEM stage (Store)
     output logic       alu_src,    // 0 = ALU Operand B is rs2; 1 = Operand B is imm_ext
-    output logic [3:0] alu_ctrl,   // 4-bit ALU operation selector
+    output logic [4:0] alu_ctrl,   // 5-bit ALU operation selector
     output logic       branch,     // 1 = Conditional branch instruction
     output logic [1:0] jump,       // 2'b00 = No jump, 2'b01 = JAL, 2'b10 = JALR
     output logic [1:0] wb_sel      // 2'b00 = ALU result, 2'b01 = Mem read data, 2'b10 = PC+4
@@ -38,31 +38,46 @@ module control_unit (
         case (opcode)
             // -----------------------------------------------------------------
             // R-Type: Register-Register Arithmetic & Logic (ADD, SUB, SLL, etc.)
+            //         Including RISC-V Standard M-Extension (MUL, DIV, REM)
             // -----------------------------------------------------------------
             OPCODE_R_TYPE: begin
                 reg_write = 1'b1;
                 alu_src   = 1'b0;       // Second operand is rs2_data
                 wb_sel    = WBMUX_ALU;  // Write ALU result back to rd
 
-                case (funct3)
-                    FUNCT3_ADD_SUB: begin
-                        // funct7[5] distinguishes ADD (0) from SUB (1)
-                        if (funct7[5]) alu_ctrl = ALU_SUB;
-                        else           alu_ctrl = ALU_ADD;
-                    end
-                    FUNCT3_SLL:     alu_ctrl = ALU_SLL;
-                    FUNCT3_SLT:     alu_ctrl = ALU_SLT;
-                    FUNCT3_SLTU:    alu_ctrl = ALU_SLTU;
-                    FUNCT3_XOR:     alu_ctrl = ALU_XOR;
-                    FUNCT3_SRL_SRA: begin
-                        // funct7[5] distinguishes SRL (0) from SRA (1)
-                        if (funct7[5]) alu_ctrl = ALU_SRA;
-                        else           alu_ctrl = ALU_SRL;
-                    end
-                    FUNCT3_OR:      alu_ctrl = ALU_OR;
-                    FUNCT3_AND:     alu_ctrl = ALU_AND;
-                    default:        alu_ctrl = ALU_ADD;
-                endcase
+                if (funct7 == FUNCT7_M_EXT) begin
+                    case (funct3)
+                        FUNCT3_MUL:    alu_ctrl = ALU_MUL;
+                        FUNCT3_MULH:   alu_ctrl = ALU_MULH;
+                        FUNCT3_MULHSU: alu_ctrl = ALU_MULHSU;
+                        FUNCT3_MULHU:  alu_ctrl = ALU_MULHU;
+                        FUNCT3_DIV:    alu_ctrl = ALU_DIV;
+                        FUNCT3_DIVU:   alu_ctrl = ALU_DIVU;
+                        FUNCT3_REM:    alu_ctrl = ALU_REM;
+                        FUNCT3_REMU:   alu_ctrl = ALU_REMU;
+                        default:       alu_ctrl = ALU_ADD;
+                    endcase
+                end else begin
+                    case (funct3)
+                        FUNCT3_ADD_SUB: begin
+                            // funct7[5] distinguishes ADD (0) from SUB (1)
+                            if (funct7[5]) alu_ctrl = ALU_SUB;
+                            else           alu_ctrl = ALU_ADD;
+                        end
+                        FUNCT3_SLL:     alu_ctrl = ALU_SLL;
+                        FUNCT3_SLT:     alu_ctrl = ALU_SLT;
+                        FUNCT3_SLTU:    alu_ctrl = ALU_SLTU;
+                        FUNCT3_XOR:     alu_ctrl = ALU_XOR;
+                        FUNCT3_SRL_SRA: begin
+                            // funct7[5] distinguishes SRL (0) from SRA (1)
+                            if (funct7[5]) alu_ctrl = ALU_SRA;
+                            else           alu_ctrl = ALU_SRL;
+                        end
+                        FUNCT3_OR:      alu_ctrl = ALU_OR;
+                        FUNCT3_AND:     alu_ctrl = ALU_AND;
+                        default:        alu_ctrl = ALU_ADD;
+                    endcase
+                end
             end
 
             // -----------------------------------------------------------------

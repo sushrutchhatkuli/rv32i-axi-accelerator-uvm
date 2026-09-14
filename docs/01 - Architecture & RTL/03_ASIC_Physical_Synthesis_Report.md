@@ -8,11 +8,11 @@
 
 | Subsystem / Module | Top Module | Total Standard Cells | Combinational Logic | Sequential Flip-Flops (DFF) |
 |:---|:---|:---:|:---:|:---:|
-| **RV32I 5-Stage Pipelined Processor Core** | `rv32i_core_top` | 8,996 | 7,536 | 1,460 |
+| **RV32IM 5-Stage Pipelined Processor Core** | `rv32i_core_top` | 40,450 | 38,989 | 1,461 |
 | **AMBA AXI4-Lite Master Interface Bridge** | `axi_lite_master` | 257 | 151 | 106 |
 | **AMBA AXI4-Lite Interconnect Crossbar** | `axi_interconnect` | 383 | 375 | 8 |
 | **4-MAC Matrix Accelerator Compute Engine** | `accel_top` | 67,252 | 52,442 | 14,810 |
-| **TOTAL HETEROGENEOUS SOC LOGIC** | `soc_top` | **76,888** | **60,504** | **16,384** |
+| **TOTAL HETEROGENEOUS SOC LOGIC** | `soc_top` | **108,342** | **91,957** | **16,385** |
 
 ## Silicon Feasibility Verdict
 - **Zero Unintentional Latches**: All state transitions and combinational logic paths are fully specified.

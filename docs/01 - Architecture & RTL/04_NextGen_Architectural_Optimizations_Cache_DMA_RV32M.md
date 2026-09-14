@@ -151,6 +151,13 @@ We integrated the **RV32M Standard Extension** directly into the Execute (EX) st
 3. **Performance Impact**:
    - Transforms 40-cycle software multiplication loops into **single-cycle hardware operations**.
 
+### 4.3 Implementation & Silicon Verification Status (Completed)
+- **RTL Integration**: Integrated all 8 M-extension instructions into `rtl/core/alu.sv`, `rtl/core/control_unit.sv`, `rtl/core/riscv_defines.svh`, `rtl/core/pipe_id_ex.sv`, and `rtl/core/rv32i_core_top.sv`.
+- **Assembler Support**: Added instruction encoding for `mul`, `mulh`, `mulhsu`, `mulhu`, `div`, `divu`, `rem`, `remu` in `scripts/asm_to_hex.py`.
+- **Unit Verification**: Built dedicated 32-test self-checking testbench (`verif/tb/tb_rv32m_units.sv`) testing sign products, upper word extractions, division, modulo, divide-by-zero, and signed overflow. All 32/32 tests pass.
+- **System Regression**: Added `Phase 1: RV32M Hardware Multiplier & Divider` to `scripts/run_regression.py`. Full regression now runs 10 testbenches with 146 assertions, passing 100%.
+- **Physical ASIC Synthesis**: Synthesized the RV32IM core with Yosys 0.33 to 40,450 CMOS standard cell gates with 0 latches and 0 timing loops.
+
 ---
 
 ## 5. Architectural Upgrade Summary

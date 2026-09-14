@@ -93,7 +93,7 @@ flowchart TB
 - [[03_Phase_3_UVM_Verification_Implementation| Phase 3 Execution: Building the UVM Testbench]]: Step-by-Step verification implementation and coverage closure.
 - [[04_Phase_4_Baremetal_Firmware_and_CoVerification| Phase 4 Execution: Bare-Metal Firmware & HW/SW Co-Verification]]: Autonomous C/assembly driver execution, MMIO, interrupts, and mailbox verification.
 - [[05_Tiled_GEMM_Algorithm_and_Hardware_Partitioning| Phase 4 Extension: 4x4 Tiled Block GEMM & Hardware Partitioning]]: Generic tensor partitioning, 8 coprocessor runs, partial-product accumulation.
-- [[03_ASIC_Physical_Synthesis_Report| ASIC Synthesis Report]]: Yosys 0.33 gate-level synthesis (76,888 gates, 16,384 DFFs).
+- [[03_ASIC_Physical_Synthesis_Report| ASIC Synthesis Report]]: Yosys 0.33 gate-level synthesis (108,342 gates, 16,385 DFFs).
 - [[02_Simulation_Scripts_and_Makefiles| Automated Makefiles & Regression Scripts]]: One-click compilation, test running, waveform dumping, and log parsing.
 
 ---
@@ -103,14 +103,15 @@ flowchart TB
 | Phase | Module | Milestone Goal | Verification Gate | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **Phase 1** | **RV32I Core** | 5-stage pipelined CPU with Forwarding & Hazard Unit | 44/44 unit tests pass without stalls/corruptions | Completed |
+| **Upgrade 3** | **RV32M Extension** | Hardware Multiplier & Divider (MUL/DIV/REM) in ALU | 32/32 tests pass, zero-divide & overflow compliant | Completed |
 | **Phase 2.1** | **AXI4-Lite Bus** | Master/Slave wrappers & 5-channel handshake logic | 10/10 protocol tests pass without deadlocks | Completed |
 | **Phase 2.2** | **Accelerator** | 4-MAC engine / Systolic array with Q8.8 fixed-point math | 13/13 computation & saturation checks pass | Completed |
 | **Phase 2.3** | **SoC Integration** | CPU boots C code, programs accelerator over MMIO, handles IRQ | 12/12 integration checks pass | Completed |
 | **Phase 3** | **UVM Environment** | Scoreboard, C++ golden predictor, functional coverage | 100% mathematical accuracy & coverage closure | Completed |
 | **Phase 4** | **Firmware & Co-Verification** | Autonomous bare-metal firmware runs on silicon datapath | 13/13 checks pass, 0xCAFEBABE in RAM mailbox | Completed |
 | **Phase 4 Ext**| **4x4 Tiled Block GEMM** | Generic block matrix partitioning over fixed 2x2 silicon | 10/10 checks pass, 8 coprocessor runs, 0xFEEDC0DE | Completed |
-| **Synthesis** | **ASIC Physical Mapping** | Yosys technology mapping to CMOS logic cells | 76,888 gates, 16,384 DFFs, 0 latches | Completed |
-| **Regression**| **CI/CD Test Suite** | Automated regression script running all 9 testbenches | 114/114 assertions pass across 9 testbenches | Completed |
+| **Synthesis** | **ASIC Physical Mapping** | Yosys technology mapping to CMOS logic cells | 108,342 gates, 16,385 DFFs, 0 latches | Completed |
+| **Regression**| **CI/CD Test Suite** | Automated regression script running all 10 testbenches | 146/146 assertions pass across 10 testbenches | Completed |
 
 ---
 *Tip: Click on any `[[Link]]` above to jump directly into the technical deep dive note.*

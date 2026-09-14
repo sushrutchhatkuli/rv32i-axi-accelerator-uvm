@@ -89,6 +89,55 @@ def assemble(input_file, output_file):
             rs2 = parse_reg(tokens[3])
             instr = (0b0100000 << 25) | (rs2 << 20) | (rs1 << 15) | (0b000 << 12) | (rd << 7) | 0x33
 
+        # RV32M Standard Extension Instructions
+        elif op == 'mul':
+            rd = parse_reg(tokens[1])
+            rs1 = parse_reg(tokens[2])
+            rs2 = parse_reg(tokens[3])
+            instr = (0b0000001 << 25) | (rs2 << 20) | (rs1 << 15) | (0b000 << 12) | (rd << 7) | 0x33
+
+        elif op == 'mulh':
+            rd = parse_reg(tokens[1])
+            rs1 = parse_reg(tokens[2])
+            rs2 = parse_reg(tokens[3])
+            instr = (0b0000001 << 25) | (rs2 << 20) | (rs1 << 15) | (0b001 << 12) | (rd << 7) | 0x33
+
+        elif op == 'mulhsu':
+            rd = parse_reg(tokens[1])
+            rs1 = parse_reg(tokens[2])
+            rs2 = parse_reg(tokens[3])
+            instr = (0b0000001 << 25) | (rs2 << 20) | (rs1 << 15) | (0b010 << 12) | (rd << 7) | 0x33
+
+        elif op == 'mulhu':
+            rd = parse_reg(tokens[1])
+            rs1 = parse_reg(tokens[2])
+            rs2 = parse_reg(tokens[3])
+            instr = (0b0000001 << 25) | (rs2 << 20) | (rs1 << 15) | (0b011 << 12) | (rd << 7) | 0x33
+
+        elif op == 'div':
+            rd = parse_reg(tokens[1])
+            rs1 = parse_reg(tokens[2])
+            rs2 = parse_reg(tokens[3])
+            instr = (0b0000001 << 25) | (rs2 << 20) | (rs1 << 15) | (0b100 << 12) | (rd << 7) | 0x33
+
+        elif op == 'divu':
+            rd = parse_reg(tokens[1])
+            rs1 = parse_reg(tokens[2])
+            rs2 = parse_reg(tokens[3])
+            instr = (0b0000001 << 25) | (rs2 << 20) | (rs1 << 15) | (0b101 << 12) | (rd << 7) | 0x33
+
+        elif op == 'rem':
+            rd = parse_reg(tokens[1])
+            rs1 = parse_reg(tokens[2])
+            rs2 = parse_reg(tokens[3])
+            instr = (0b0000001 << 25) | (rs2 << 20) | (rs1 << 15) | (0b110 << 12) | (rd << 7) | 0x33
+
+        elif op == 'remu':
+            rd = parse_reg(tokens[1])
+            rs1 = parse_reg(tokens[2])
+            rs2 = parse_reg(tokens[3])
+            instr = (0b0000001 << 25) | (rs2 << 20) | (rs1 << 15) | (0b111 << 12) | (rd << 7) | 0x33
+
         elif op == 'addi':
             rd = parse_reg(tokens[1])
             rs1 = parse_reg(tokens[2])

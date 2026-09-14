@@ -85,7 +85,7 @@ module rv32i_core_top (
 
     // Control Unit (The Brain)
     logic       id_reg_write, id_mem_read, id_mem_write, id_alu_src, id_branch;
-    logic [3:0] id_alu_ctrl;
+    logic [4:0] id_alu_ctrl;
     logic [1:0] id_jump, id_wb_sel;
 
     control_unit u_control (
@@ -133,7 +133,7 @@ module rv32i_core_top (
     logic [4:0]  ex_rs1_addr, ex_rs2_addr, ex_rd_addr;
     logic [2:0]  ex_funct3;
     logic        ex_reg_write, ex_mem_read, ex_mem_write, ex_alu_src, ex_branch;
-    logic [3:0]  ex_alu_ctrl;
+    logic [4:0]  ex_alu_ctrl;
     logic [1:0]  ex_jump, ex_wb_sel;
 
     pipe_id_ex u_pipe_id_ex (

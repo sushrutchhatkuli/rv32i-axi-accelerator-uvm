@@ -29,7 +29,7 @@ module pipe_id_ex (
     input  logic        id_mem_read,
     input  logic        id_mem_write,
     input  logic        id_alu_src,
-    input  logic [3:0]  id_alu_ctrl,
+    input  logic [4:0]  id_alu_ctrl,
     input  logic        id_branch,
     input  logic [1:0]  id_jump,
     input  logic [1:0]  id_wb_sel,
@@ -49,7 +49,7 @@ module pipe_id_ex (
     output logic        ex_mem_read,
     output logic        ex_mem_write,
     output logic        ex_alu_src,
-    output logic [3:0]  ex_alu_ctrl,
+    output logic [4:0]  ex_alu_ctrl,
     output logic        ex_branch,
     output logic [1:0]  ex_jump,
     output logic [1:0]  ex_wb_sel

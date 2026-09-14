@@ -18,7 +18,7 @@ module tb_control_branch;
     logic       ctrl_mem_read;
     logic       ctrl_mem_write;
     logic       ctrl_alu_src;
-    logic [3:0] ctrl_alu_ctrl;
+    logic [4:0] ctrl_alu_ctrl;
     logic       ctrl_branch;
     logic [1:0] ctrl_jump;
     logic [1:0] ctrl_wb_sel;

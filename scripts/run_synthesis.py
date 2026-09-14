@@ -15,7 +15,7 @@ import time
 
 TARGETS = [
     {
-        "name": "RV32I 5-Stage Pipelined Processor Core",
+        "name": "RV32IM 5-Stage Pipelined Processor Core",
         "top": "rv32i_core_top",
         "includes": ["rtl/core"],
         "sources": ["rtl/core/*.sv"]

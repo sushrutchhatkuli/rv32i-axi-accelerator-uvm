@@ -16,7 +16,7 @@ module tb_core_units;
 
     // ALU Signals
     logic [31:0] alu_a, alu_b, alu_result;
-    logic [3:0]  alu_ctrl;
+    logic [4:0]  alu_ctrl;
     logic        alu_zero;
 
     // Register File Signals
