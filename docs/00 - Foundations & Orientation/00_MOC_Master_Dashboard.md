@@ -58,6 +58,7 @@ flowchart TB
 - [[01_RISCV_RV32I_Architecture| RV32I Architecture & ISA Specification]]: Instructions (R, I, S, B, U, J types), registers `x0`-`x31`, and execution flow.
 - [[02_Five_Stage_Pipelined_Core| 5-Stage Pipelined Datapath]]: Instruction Fetch (IF), Decode (ID), Execute (EX), Memory (MEM), and Writeback (WB).
 - [[03_Hazards_Forwarding_and_Branch_Prediction| Hazard Detection, Forwarding & Branch Prediction]]: Resolving RAW data hazards, load-use bubbles, and branch flushes.
+- [[04_NextGen_Architectural_Optimizations_Cache_DMA_RV32M| Silicon Optimization Blueprint: L1 Cache, DMA Engine & RV32M Extension]]: Detailed architectural specification resolving the memory wall, CPU data mover overhead, and software math latency.
 
 ---
 
