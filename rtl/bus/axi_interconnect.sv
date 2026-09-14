@@ -95,12 +95,14 @@ module axi_interconnect (
     // Address Decode Helpers
     // -------------------------------------------------------------------------
     function logic [1:0] decode_addr(input logic [31:0] addr);
-        if (addr <= 32'h2000_FFFF) begin
-            return 2'b00; // Slave 0: RAM
-        end else if (addr >= 32'h4000_0000 && addr <= 32'h4000_07FF) begin
-            return 2'b01; // Slave 1: Accelerator
-        end else begin
-            return 2'b10; // Error / Unmapped (DECERR)
+        begin
+            if (addr <= 32'h2000_FFFF) begin
+                decode_addr = 2'b00; // Slave 0: RAM
+            end else if (addr >= 32'h4000_0000 && addr <= 32'h4000_07FF) begin
+                decode_addr = 2'b01; // Slave 1: Accelerator
+            end else begin
+                decode_addr = 2'b10; // Error / Unmapped (DECERR)
+            end
         end
     endfunction
 

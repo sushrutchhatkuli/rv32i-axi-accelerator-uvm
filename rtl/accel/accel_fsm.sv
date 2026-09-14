@@ -78,7 +78,29 @@ module accel_fsm (
     wire [9:0] addr_c = c_base[9:0] + (row_i * dim_reg) + col_j;
 
     always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n || soft_reset) begin
+        if (!rst_n) begin
+            state           <= ST_IDLE;
+            row_i           <= 8'd0;
+            col_j           <= 8'd0;
+            k_idx           <= 8'd0;
+            dim_reg         <= 8'd0;
+            a_base          <= 16'd0;
+            b_base          <= 16'd0;
+            c_base          <= 16'd0;
+            busy            <= 1'b0;
+            done            <= 1'b0;
+            irq             <= 1'b0;
+            overflow_flag   <= 1'b0;
+            overflow_sticky <= 1'b0;
+            a_elem          <= 16'sd0;
+            buf_we          <= 1'b0;
+            buf_addr        <= 10'd0;
+            buf_wdata       <= 16'd0;
+            mac_clear       <= 1'b0;
+            mac_enable      <= 1'b0;
+            mac_a           <= 16'sd0;
+            mac_b           <= 16'sd0;
+        end else if (soft_reset) begin
             state           <= ST_IDLE;
             row_i           <= 8'd0;
             col_j           <= 8'd0;

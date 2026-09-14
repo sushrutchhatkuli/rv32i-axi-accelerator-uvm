@@ -21,12 +21,13 @@ TOP_SRCS  = $(CORE_SRCS) $(BUS_SRCS) $(ACCEL_SRCS) $(wildcard rtl/top/*.sv)
 
 SIM_DIR = sim_build
 
-.PHONY: all regression clean firmware test-firmware test-core test-bus test-accel test-soc help
+.PHONY: all regression clean firmware test-firmware test-core test-bus test-accel test-soc synth help
 
 help:
 	@echo "Heterogeneous RISC-V SoC Build System"
 	@echo "Available Targets:"
 	@echo "  make regression    - Run entire 8-testbench regression suite"
+	@echo "  make synth         - Run physical ASIC synthesis with Yosys"
 	@echo "  make firmware      - Assemble assembly firmware into hex format"
 	@echo "  make test-firmware - Run autonomous HW/SW co-verification simulation"
 	@echo "  make test-core     - Run Phase 1 RISC-V Core testbenches"
@@ -69,6 +70,9 @@ test-soc: $(SIM_DIR)
 
 regression:
 	$(PYTHON) scripts/run_regression.py
+
+synth:
+	$(PYTHON) scripts/run_synthesis.py
 
 clean:
 	rm -rf $(SIM_DIR) *.vcd

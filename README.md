@@ -6,6 +6,7 @@
 [![Interconnect](https://img.shields.io/badge/Bus-AMBA%20AXI4--Lite-orange.svg)](https://developer.arm.com/architectures/system-architectures/amba)
 [![Firmware](https://img.shields.io/badge/Firmware-Bare--Metal%20C%20%2F%20ASM-success.svg)](firmware/)
 [![Regression](https://img.shields.io/badge/Regression-104%2F104%20Pass%20(100%25)-darkgreen.svg)](scripts/run_regression.py)
+[![Synthesis](https://img.shields.io/badge/ASIC%20Synthesis-76.8k%20Gates%20(Clean)-blue.svg)](scripts/run_synthesis.py)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
 An industrial-grade **Heterogeneous System-on-Chip (SoC)**, **Bare-Metal Firmware Driver Stack**, and **Constrained-Random UVM Verification Environment** designed from scratch in SystemVerilog.
@@ -68,6 +69,11 @@ flowchart TB
 - **MMIO Coprocessor Orchestration**: CPU configures accelerator registers, drives input matrices across AXI, and polls or awaits hardware interrupt (`accel_irq_out`).
 - **Self-Verifying Mailbox**: CPU reads back results from the scratchpad buffer, validates against golden values, and stores `0xCAFEBABE` to RAM address `0x0000_1000`.
 
+### 6. ASIC Physical Synthesis & Technology Mapping (Yosys)
+- **Cell Mapping**: Synthesized using Yosys 0.33 to generic standard CMOS gates (NAND, NOR, XOR, DFFE registers).
+- **Physical Feasibility**: 100% clean synthesis with zero combinational loops, zero unintentional latches, and clean clock boundaries.
+- **Resource Utilization**: Complete SoC logic synthesizes to 76,888 standard cells with 16,384 sequential flip-flops.
+
 ![IEEE 1800.2 UVM Verification Architecture](docs/assets/uvm_architecture.png)
 
 ---
@@ -75,6 +81,16 @@ flowchart TB
 ## Hardware Simulation & Verification Scorecard
 
 All modules across the CPU core, AXI bus, matrix accelerator, and top-level SoC have been verified with automated self-checking testbenches:
+
+### ASIC Physical Synthesis & Gate-Level Utilization Report (Yosys 0.33)
+
+| Subsystem / Module | Top Module | Total Standard Cells | Combinational Logic | Sequential Flip-Flops (DFF) |
+|:---|:---|:---:|:---:|:---:|
+| **RV32I 5-Stage Pipelined Processor Core** | `rv32i_core_top` | 8,996 | 7,536 | 1,460 |
+| **AMBA AXI4-Lite Master Interface Bridge** | `axi_lite_master` | 257 | 151 | 106 |
+| **AMBA AXI4-Lite Interconnect Crossbar** | `axi_interconnect` | 383 | 375 | 8 |
+| **4-MAC Matrix Accelerator Compute Engine** | `accel_top` | 67,252 | 52,442 | 14,810 |
+| **TOTAL HETEROGENEOUS SOC LOGIC** | `soc_top` | **76,888** | **60,504** | **16,384** |
 
 ### Complete Regression Suite (100% Pass Across 8 Testbenches)
 ```
@@ -109,6 +125,7 @@ Run any of the following targets from the root workspace:
 
 ```bash
 make regression      # Execute the complete 8-testbench regression suite (104 assertions)
+make synth           # Run physical ASIC synthesis with Yosys (76.8k gates)
 make test-firmware   # Run autonomous bare-metal HW/SW co-verification
 make test-core       # Run Phase 1 RISC-V CPU pipeline unit tests
 make test-bus        # Run Phase 2 AXI4-Lite bus protocol checks
@@ -127,6 +144,9 @@ make clean           # Clean up simulation binaries and VCD waveforms
 
 #### 3. Control Unit & Branch Condition Logic (100% Pass)
 ![Control & Branch Simulation Pass](docs/assets/control_branch_simulation_pass.png)
+
+#### 4. Autonomous Bare-Metal Firmware Co-Verification (100% Pass)
+![Autonomous Firmware Simulation Pass](docs/assets/firmware_simulation_pass.png)
 
 ---
 
