@@ -21,16 +21,17 @@ TOP_SRCS  = $(CORE_SRCS) $(BUS_SRCS) $(ACCEL_SRCS) $(wildcard rtl/top/*.sv)
 
 SIM_DIR = sim_build
 
-.PHONY: all regression clean firmware tiled-firmware test-firmware test-tiled test-core test-bus test-accel test-soc synth help
+.PHONY: all regression clean firmware tiled-firmware test-firmware test-tiled test-core test-bus test-accel test-soc synth view-cpu wave help
 
 help:
 	@echo "Heterogeneous RISC-V SoC Build System"
 	@echo "Available Targets:"
 	@echo "  make regression    - Run entire 9-testbench regression suite"
 	@echo "  make synth         - Run physical ASIC synthesis with Yosys"
-	@echo "  make firmware      - Assemble assembly firmware into hex format"
-	@echo "  make test-firmware - Run autonomous HW/SW co-verification simulation"
+	@echo "  make view-cpu      - Interactive cycle-accurate CPU & Accelerator visualizer"
+	@echo "  make wave          - Open graphical digital waveforms in GTKWave"
 	@echo "  make test-tiled    - Run 4x4 Tiled Block GEMM HW/SW co-verification"
+	@echo "  make test-firmware - Run autonomous HW/SW co-verification simulation"
 	@echo "  make test-core     - Run Phase 1 RISC-V Core testbenches"
 	@echo "  make test-bus      - Run Phase 2 AXI4-Lite Interconnect testbench"
 	@echo "  make test-accel    - Run Phase 3 4-MAC Accelerator testbench"
@@ -81,6 +82,12 @@ regression:
 
 synth:
 	$(PYTHON) scripts/run_synthesis.py
+
+view-cpu:
+	$(PYTHON) scripts/visualize_cpu.py
+
+wave:
+	gtkwave soc_tiled_gemm_trace.vcd soc_tiled_gemm.gtkw
 
 clean:
 	rm -rf $(SIM_DIR) *.vcd

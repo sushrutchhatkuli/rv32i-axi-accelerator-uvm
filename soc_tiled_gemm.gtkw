@@ -1,0 +1,43 @@
+[*]
+[*] GTKWave Analyzer Save File
+[*] Project: Heterogeneous RISC-V SoC with AXI4-Lite & 4-MAC Accelerator
+[*]
+[dumpfile] "soc_tiled_gemm_trace.vcd"
+[savefile] "soc_tiled_gemm.gtkw"
+[timestart] 0
+[size] 1400 800
+[pos] -1 -1
+*-signals-
+tb_soc_tiled_gemm.clk
+tb_soc_tiled_gemm.rst_n
+@28
+tb_soc_tiled_gemm.accel_irq_out
+@22
+tb_soc_tiled_gemm.cycle_count[31:0]
+tb_soc_tiled_gemm.imem_addr[31:0]
+tb_soc_tiled_gemm.imem_rdata[31:0]
+tb_soc_tiled_gemm.tile_calc_count[31:0]
+@200
+-AXI4-LITE ACCELERATOR BUS
+@22
+tb_soc_tiled_gemm.u_soc.s1_axi_awaddr[31:0]
+@28
+tb_soc_tiled_gemm.u_soc.s1_axi_awvalid
+tb_soc_tiled_gemm.u_soc.s1_axi_awready
+@22
+tb_soc_tiled_gemm.u_soc.s1_axi_wdata[31:0]
+@28
+tb_soc_tiled_gemm.u_soc.s1_axi_wvalid
+tb_soc_tiled_gemm.u_soc.s1_axi_wready
+@22
+tb_soc_tiled_gemm.u_soc.s1_axi_rdata[31:0]
+@28
+tb_soc_tiled_gemm.u_soc.s1_axi_rvalid
+tb_soc_tiled_gemm.u_soc.s1_axi_rready
+@200
+-COPROCESSOR STATE
+@28
+tb_soc_tiled_gemm.u_soc.u_accel.u_fsm.state[2:0]
+tb_soc_tiled_gemm.u_soc.u_accel.u_fsm.done
+[pattern_trace] 1
+[pattern_trace] 0
