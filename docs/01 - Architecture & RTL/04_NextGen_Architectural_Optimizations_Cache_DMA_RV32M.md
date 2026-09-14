@@ -52,6 +52,12 @@ We designed a high-speed, direct-mapped / 2-way set-associative **L1 Cache Subsy
 3. **Performance Impact**:
    - Reduces average memory access time (AMAT) by up to 90% for iterative loops and kernel code.
 
+### 2.3 Implementation & Silicon Verification Status (Completed)
+- **RTL Implementation**: Implemented 1 KB Direct-Mapped L1 Cache Subsystem in [`rtl/core/l1_cache_controller.sv`](file:///c:/Users/sushr/Documents/Custom%20Accelerator%20+%20AXI%20Bus%20and%20UVM%20&%20SystemVerilog%20(Verification)/rtl/core/l1_cache_controller.sv) with 64 lines $\times$ 16 bytes, single-cycle hit comparator, 4-word sequential AXI refill FSM, write-through coherence, and non-cacheable MMIO bypass for accelerator registers (`0x4000_0000` to `0x4000_07FF`).
+- **Unit Verification**: Built dedicated 25-test self-checking testbench ([`verif/tb/tb_l1_cache.sv`](file:///c:/Users/sushr/Documents/Custom%20Accelerator%20+%20AXI%20Bus%20and%20UVM%20&%20SystemVerilog%20(Verification)/verif/tb/tb_l1_cache.sv)) testing cold misses, temporal locality hits, spatial locality adjacent hits, write-through coherence, conflict miss tag replacement, and MMIO peripheral bypass. 25/25 tests pass 100%.
+- **System Regression**: Added `Phase 1: L1 Hardware Cache Controller` to [`scripts/run_regression.py`](file:///c:/Users/sushr/Documents/Custom%20Accelerator%20+%20AXI%20Bus%20and%20UVM%20&%20SystemVerilog%20(Verification)/scripts/run_regression.py). Full regression now runs 11 testbenches with 171 assertions, passing 100%.
+- **Physical ASIC Synthesis**: Synthesized the L1 Cache Controller with Yosys 0.33 to 49,742 CMOS standard cell gates (39,938 Combinational, 9,804 Sequential DFFs) with 0 latches and 0 timing loops. Total SoC logic reaches 158,116 gates.
+
 ---
 
 ## 3. Upgrade 2: Hardware Direct Memory Access (DMA) Controller

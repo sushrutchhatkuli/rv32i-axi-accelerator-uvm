@@ -3,7 +3,7 @@
 # File: run_regression.py
 # Project: Heterogeneous RISC-V SoC with AXI4-Lite & Accelerator
 # Description: Automated CI/CD Regression Suite.
-#              Executes full test suite (10 testbenches) across all architectural
+#              Executes full test suite (11 testbenches) across all architectural
 #              phases using Icarus Verilog and vvp.
 # =============================================================================
 
@@ -34,6 +34,12 @@ TESTS = [
     {
         "name": "Phase 1: RV32M Hardware Multiplier & Divider",
         "tb": "verif/tb/tb_rv32m_units.sv",
+        "includes": ["rtl/core"],
+        "sources": ["rtl/core/*.sv"],
+    },
+    {
+        "name": "Phase 1: L1 Hardware Cache Controller",
+        "tb": "verif/tb/tb_l1_cache.sv",
         "includes": ["rtl/core"],
         "sources": ["rtl/core/*.sv"],
     },

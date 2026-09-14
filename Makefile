@@ -21,12 +21,12 @@ TOP_SRCS  = $(CORE_SRCS) $(BUS_SRCS) $(ACCEL_SRCS) $(wildcard rtl/top/*.sv)
 
 SIM_DIR = sim_build
 
-.PHONY: all regression clean firmware tiled-firmware test-firmware test-tiled test-core test-m-ext test-bus test-accel test-soc synth view-cpu wave help
+.PHONY: all regression clean firmware tiled-firmware test-firmware test-tiled test-core test-m-ext test-cache test-bus test-accel test-soc synth view-cpu wave help
 
 help:
 	@echo "Heterogeneous RISC-V SoC Build System"
 	@echo "Available Targets:"
-	@echo "  make regression    - Run entire 10-testbench regression suite"
+	@echo "  make regression    - Run entire 11-testbench regression suite"
 	@echo "  make synth         - Run physical ASIC synthesis with Yosys"
 	@echo "  make view-cpu      - Interactive cycle-accurate CPU & Accelerator visualizer"
 	@echo "  make wave          - Open graphical digital waveforms in GTKWave"
@@ -34,6 +34,7 @@ help:
 	@echo "  make test-firmware - Run autonomous HW/SW co-verification simulation"
 	@echo "  make test-core     - Run Phase 1 RISC-V Core testbenches (including RV32M)"
 	@echo "  make test-m-ext    - Run RV32M Hardware Multiplier / Divider testbench"
+	@echo "  make test-cache    - Run L1 Hardware Cache Controller testbench"
 	@echo "  make test-bus      - Run Phase 2 AXI4-Lite Interconnect testbench"
 	@echo "  make test-accel    - Run Phase 3 4-MAC Accelerator testbench"
 	@echo "  make test-soc      - Run Phase 3 SoC top integration testbench"
@@ -69,6 +70,10 @@ test-core: $(SIM_DIR)
 test-m-ext: $(SIM_DIR)
 	$(IVERILOG) $(FLAGS) $(CORE_INCS) $(CORE_SRCS) verif/tb/tb_rv32m_units.sv -o $(SIM_DIR)/tb_rv32m_units.out
 	$(VVP) $(SIM_DIR)/tb_rv32m_units.out
+
+test-cache: $(SIM_DIR)
+	$(IVERILOG) $(FLAGS) $(CORE_INCS) rtl/core/l1_cache_controller.sv verif/tb/tb_l1_cache.sv -o $(SIM_DIR)/tb_l1_cache.out
+	$(VVP) $(SIM_DIR)/tb_l1_cache.out
 
 test-bus: $(SIM_DIR)
 	$(IVERILOG) $(FLAGS) $(BUS_INCS) $(BUS_SRCS) verif/tb/tb_axi_lite_bus.sv -o $(SIM_DIR)/tb_axi_lite_bus.out

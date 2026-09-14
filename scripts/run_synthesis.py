@@ -21,6 +21,12 @@ TARGETS = [
         "sources": ["rtl/core/*.sv"]
     },
     {
+        "name": "L1 Hardware Cache Controller (1 KB Direct-Mapped)",
+        "top": "l1_cache_controller",
+        "includes": ["rtl/core"],
+        "sources": ["rtl/core/l1_cache_controller.sv"]
+    },
+    {
         "name": "AMBA AXI4-Lite Master Interface Bridge",
         "top": "axi_lite_master",
         "includes": ["rtl/bus"],

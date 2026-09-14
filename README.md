@@ -5,13 +5,13 @@
 [![ISA](https://img.shields.io/badge/ISA-RISC--V%20RV32IM-red.svg)](https://riscv.org/technical/specifications/)
 [![Interconnect](https://img.shields.io/badge/Bus-AMBA%20AXI4--Lite-orange.svg)](https://developer.arm.com/architectures/system-architectures/amba)
 [![Firmware](https://img.shields.io/badge/Firmware-Bare--Metal%20C%20%2F%20ASM-success.svg)](firmware/)
-[![Regression](https://img.shields.io/badge/Regression-146%2F146%20Pass%20(100%25)-darkgreen.svg)](scripts/run_regression.py)
-[![Synthesis](https://img.shields.io/badge/ASIC%20Synthesis-108.3k%20Gates%20(Clean)-blue.svg)](scripts/run_synthesis.py)
+[![Regression](https://img.shields.io/badge/Regression-171%2F171%20Pass%20(100%25)-darkgreen.svg)](scripts/run_regression.py)
+[![Synthesis](https://img.shields.io/badge/ASIC%20Synthesis-158.1k%20Gates%20(Clean)-blue.svg)](scripts/run_synthesis.py)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
 An industrial-grade **Heterogeneous System-on-Chip (SoC)**, **Bare-Metal Firmware Driver Stack**, and **Constrained-Random UVM Verification Environment** designed from scratch in SystemVerilog.
 
-The system integrates a synthesizable **5-stage pipelined RV32IM RISC-V Core** with a **Domain-Specific Hardware Accelerator (4-MAC Matrix Engine)** over an industry-standard **AMBA AXI4-Lite interconnect**. It features autonomous **bare-metal C and assembly firmware** that boots and orchestrates matrix multiplication directly on silicon, verified using an automated **IEEE 1800.2 UVM testbench** powered by a **C++ DPI-C Golden Predictor** and an automated **146-assertion CI/CD regression suite**.
+The system integrates a synthesizable **5-stage pipelined RV32IM RISC-V Core** with a **Domain-Specific Hardware Accelerator (4-MAC Matrix Engine)** over an industry-standard **AMBA AXI4-Lite interconnect**. It features autonomous **bare-metal C and assembly firmware** that boots and orchestrates matrix multiplication directly on silicon, verified using an automated **IEEE 1800.2 UVM testbench** powered by a **C++ DPI-C Golden Predictor** and an automated **171-assertion CI/CD regression suite**.
 
 ---
 
@@ -74,13 +74,13 @@ flowchart TB
 ### 6. ASIC Physical Synthesis & Technology Mapping (Yosys)
 - **Cell Mapping**: Synthesized using Yosys 0.33 to generic standard CMOS gates (NAND, NOR, XOR, DFFE registers).
 - **Physical Feasibility**: 100% clean synthesis with zero combinational loops, zero unintentional latches, and clean clock boundaries.
-- **Resource Utilization**: Complete SoC logic synthesizes to 108,342 standard cells with 16,385 sequential flip-flops.
+- **Resource Utilization**: Complete SoC logic synthesizes to 158,116 standard cells with 26,189 sequential flip-flops.
 
 ### 7. Next-Generation Architectural Roadmap & Silicon Optimizations
 To scale system performance toward enterprise datacenter and edge-silicon targets (e.g., Apple Silicon, Google TPU), the architecture defines three dedicated hardware optimization paths:
-- **Upgrade 1: L1 Hardware Cache Controller (Instruction & Data)**
+- **Upgrade 1: L1 Hardware Cache Controller (COMPLETED & VERIFIED)**
   - **What Was Missing**: Direct, unbuffered RAM access causes multi-cycle memory stalls and bus contention between CPU instruction fetches and accelerator data streaming.
-  - **How Added for Optimization**: High-speed on-chip SRAM cache with Tag arrays, Valid/Dirty tracking, single-cycle hit detection, and multi-word AXI burst line refill on cache miss, slashing Average Memory Access Time (AMAT) by up to 90%.
+  - **How Added for Optimization**: High-speed on-chip 1 KB SRAM cache with Tag arrays, Valid tracking, single-cycle hit detection, 4-word AXI line refill, write-through coherence, and non-cacheable MMIO bypass. Verified with a dedicated 25-test regression testbench and full ASIC synthesis.
 - **Upgrade 2: Hardware Direct Memory Access (DMA) Engine**
   - **What Was Missing**: The CPU wasted over 65% of execution cycles manually executing `lw`/`sw` assembly loops to stream matrices into the accelerator buffer.
   - **How Added for Optimization**: Autonomous AXI Master DMA engine with internal 16-word FIFO buffer. The CPU programs source, destination, and length registers once, freeing the CPU completely while the DMA streams tensors at maximum bus bandwidth.
@@ -100,13 +100,14 @@ All modules across the CPU core, AXI bus, matrix accelerator, and top-level SoC 
 
 | Subsystem / Module | Top Module | Total Standard Cells | Combinational Logic | Sequential Flip-Flops (DFF) |
 |:---|:---|:---:|:---:|:---:|
-| **RV32IM 5-Stage Pipelined Processor Core** | `rv32i_core_top` | 40,450 | 38,989 | 1,461 |
+| **RV32IM 5-Stage Pipelined Processor Core** | `rv32i_core_top` | 40,482 | 39,021 | 1,461 |
+| **L1 Hardware Cache Controller (1 KB Direct-Mapped)** | `l1_cache_controller` | 49,742 | 39,938 | 9,804 |
 | **AMBA AXI4-Lite Master Interface Bridge** | `axi_lite_master` | 257 | 151 | 106 |
 | **AMBA AXI4-Lite Interconnect Crossbar** | `axi_interconnect` | 383 | 375 | 8 |
 | **4-MAC Matrix Accelerator Compute Engine** | `accel_top` | 67,252 | 52,442 | 14,810 |
-| **TOTAL HETEROGENEOUS SOC LOGIC** | `soc_top` | **108,342** | **91,957** | **16,385** |
+| **TOTAL HETEROGENEOUS SOC LOGIC** | `soc_top` | **158,116** | **131,927** | **26,189** |
 
-### Complete Regression Suite (100% Pass Across 10 Testbenches)
+### Complete Regression Suite (100% Pass Across 11 Testbenches)
 ```
 ================================================================================
   HETEROGENEOUS RISC-V SOC REGRESSION SUITE
@@ -115,6 +116,7 @@ All modules across the CPU core, AXI bus, matrix accelerator, and top-level SoC 
 [PASS] Phase 1: RV32I Branch & Control Flow                    | Passed:  20 | Failed:   0
 [PASS] Phase 1: RV32I Pipeline Hazards & Forwarding            | Passed:   9 | Failed:   0
 [PASS] Phase 1: RV32M Hardware Multiplier & Divider            | Passed:  32 | Failed:   0
+[PASS] Phase 1: L1 Hardware Cache Controller                   | Passed:  25 | Failed:   0
 [PASS] Phase 2: AMBA AXI4-Lite Interconnect & Protocol         | Passed:  10 | Failed:   0
 [PASS] Phase 3: 4-MAC Matrix Accelerator Engine                | Passed:  13 | Failed:   0
 [PASS] Phase 3: Heterogeneous SoC Hardware Integration         | Passed:  12 | Failed:   0
@@ -123,13 +125,13 @@ All modules across the CPU core, AXI bus, matrix accelerator, and top-level SoC 
 [PASS] Phase 4: 4x4 Tiled Block GEMM Driver Co-Verification    | Passed:  10 | Failed:   0
 ================================================================================
   REGRESSION SUMMARY
-  Testbenches Run    : 10
-  Testbenches Passed : 10
+  Testbenches Run    : 11
+  Testbenches Passed : 11
   Testbenches Failed : 0
-  Total Assertions   : 146
-  Total Passed Checks: 146
+  Total Assertions   : 171
+  Total Passed Checks: 171
   Total Failed Checks: 0
-  Execution Time     : 2.03 seconds
+  Execution Time     : 2.24 seconds
 ================================================================================
   OVERALL STATUS: 100% REGRESSION PASS
 ================================================================================
@@ -140,14 +142,15 @@ All modules across the CPU core, AXI bus, matrix accelerator, and top-level SoC 
 Run any of the following targets from the root workspace:
 
 ```bash
-make regression      # Execute the complete 10-testbench regression suite (146 assertions)
-make synth           # Run physical ASIC synthesis with Yosys (108.3k gates)
+make regression      # Execute the complete 11-testbench regression suite (171 assertions)
+make synth           # Run physical ASIC synthesis with Yosys (158.1k gates)
 make view-cpu        # Interactive step-by-step CPU pipeline & coprocessor visualizer
 make wave            # Open cycle-accurate waveforms in GTKWave digital oscilloscope
 make test-tiled      # Run 4x4 Tiled Block GEMM HW/SW co-verification
 make test-firmware   # Run autonomous bare-metal HW/SW co-verification
 make test-core       # Run Phase 1 RISC-V CPU pipeline unit tests (including RV32M)
 make test-m-ext      # Run dedicated RV32M Hardware Multiplier / Divider testbench
+make test-cache      # Run dedicated L1 Hardware Cache Controller testbench
 make test-bus        # Run Phase 2 AXI4-Lite bus protocol checks
 make test-accel      # Run Phase 3 4-MAC matrix engine verification
 make test-soc        # Run Phase 3 SoC top-level integration tests
