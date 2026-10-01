@@ -14,7 +14,7 @@ status: "Completed"
 # Custom Compute Accelerator Concepts & Fixed-Point Mathematics
 
 > [!NOTE] **The Rise of Domain-Specific Silicon (DSA)**
-> For 40 years, general-purpose CPUs got twice as fast every 18 months (Moore's Law & Dennard Scaling). That era is dead. Today, modern computing power comes from **Domain-Specific Hardware Accelerators**—custom silicon circuits tailored to do **one specific math operation** at superhuman speed with negligible power consumption (like Apple's Neural Engine, Google's TPU, or NVIDIA's Tensor Cores).
+> For 40 years, general-purpose CPUs got twice as fast every 18 months (Moore's Law & Dennard Scaling). That era is dead. Today, modern computing power comes from **Domain-Specific Hardware Accelerators** - custom silicon circuits tailored to do **one specific math operation** at superhuman speed with negligible power consumption (like Apple's Neural Engine, Google's TPU, or NVIDIA's Tensor Cores).
 
 ---
 
@@ -52,7 +52,7 @@ In software on a laptop, numbers with decimals (like $3.14159$) are stored as **
 
 ### Why Not Floating-Point in Hardware?
 - A 32-bit floating-point multiplier requires thousands of logic gates to normalize mantissas, align exponents, handle NaN/Infinity, and round bits.
-- It consumes huge silicon area and high thermal power—unacceptable for mobile, automotive, or edge-AI chips.
+- It consumes huge silicon area and high thermal power - unacceptable for mobile, automotive, or edge-AI chips.
 
 ### The Solution: Fixed-Point Format (Q8.8)
 Instead of a floating decimal point, we fix the position of the decimal point permanently in hardware!

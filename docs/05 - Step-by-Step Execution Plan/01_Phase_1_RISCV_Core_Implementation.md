@@ -41,7 +41,7 @@ rtl/
 
 ## Day-by-Day Implementation Roadmap
 
-### Day 1–3: Fundamental Combinational Units
+### Day 1-3: Fundamental Combinational Units
 - [ ] **Step 1.1**: Create `riscv_defines.svh` with constant parameters for opcodes (`OP_IMM = 7'b0010011`, `OP_REG = 7'b0110011`, etc.).
 - [ ] **Step 1.2**: Implement `alu.sv`. Write a quick Verilog testbench verifying all 10 ALU operations (`ADD`, `SUB`, `SLL`, `SLT`, `SLTU`, `XOR`, `SRL`, `SRA`, `OR`, `AND`).
 - [ ] **Step 1.3**: Implement `regfile.sv`. Ensure `x0` remains permanently zero even when a write is attempted!
@@ -49,7 +49,7 @@ rtl/
 
 ---
 
-### Day 4–7: The Pipeline Registers & Control Unit
+### Day 4-7: The Pipeline Registers & Control Unit
 - [ ] **Step 1.5**: Implement the 4 synchronous pipeline registers (`pipe_if_id`, `pipe_id_ex`, `pipe_ex_mem`, `pipe_mem_wb`).
 - [ ] **Step 1.6**: Add synchronous `stall` and `flush` control pins to `pipe_if_id` and `pipe_id_ex`.
  - On `stall == 1`: Hold register contents unchanged.
@@ -58,7 +58,7 @@ rtl/
 
 ---
 
-### Day 8–10: Hazard Detection & Data Forwarding
+### Day 8-10: Hazard Detection & Data Forwarding
 - [ ] **Step 1.8**: Implement `forwarding_unit.sv`.
  - Detect `EX/MEM` RAW hazard $\rightarrow$ set `forward_a/b = 2'b10`.
  - Detect `MEM/WB` RAW hazard $\rightarrow$ set `forward_a/b = 2'b01`.
@@ -68,7 +68,7 @@ rtl/
 
 ---
 
-### Day 11–14: Branch Unit & Core Top Integration
+### Day 11-14: Branch Unit & Core Top Integration
 - [ ] **Step 1.10**: Connect all blocks inside `rv32i_core_top.sv`.
 - [ ] **Step 1.11**: Implement static **Predict-Not-Taken** branch logic:
  - If branch taken in EX stage: assert `flush_if_id = 1`, `flush_id_ex = 1`, set $\text{PC} \leftarrow \text{target}$.

@@ -14,7 +14,7 @@ status: "Completed"
 # Phase 3 Execution Plan: Building the Production UVM Testbench
 
 > [!IMPORTANT] **The Gold Standard Deliverable**
-> This phase represents the skill set that commands **$150,000–$220,000+ starting compensation** in the semiconductor industry. You will build an automated, constrained-random **UVM (Universal Verification Methodology)** testbench conforming strictly to the **IEEE 1800.2** standard.
+> This phase represents the skill set that commands **$150,000-$220,000+ starting compensation** in the semiconductor industry. You will build an automated, constrained-random **UVM (Universal Verification Methodology)** testbench conforming strictly to the **IEEE 1800.2** standard.
 
 ---
 
@@ -51,7 +51,7 @@ verif/
 
 ## Day-by-Day Implementation Roadmap
 
-### Day 1–3: SystemVerilog Interfaces & Protocol Assertions (SVA)
+### Day 1-3: SystemVerilog Interfaces & Protocol Assertions (SVA)
 - [ ] **Step 3.1**: Implement `axi_if.sv` using the code in [[02_SystemVerilog_Interfaces_and_SVA#1-systemverilog-parameterized-interface-axi_if|axi_if.sv]].
 - [ ] **Step 3.2**: Add `clocking driver_cb` and `clocking monitor_cb` to completely isolate the testbench from Verilog delta-cycle races.
 - [ ] **Step 3.3**: Embed concurrent SystemVerilog Assertions directly inside the interface:
@@ -61,7 +61,7 @@ verif/
 
 ---
 
-### Day 4–7: UVM Sequences, Driver & Monitor
+### Day 4-7: UVM Sequences, Driver & Monitor
 - [ ] **Step 3.4**: Implement `axi_seq_item.sv` with random address alignment and backpressure latency constraints.
 - [ ] **Step 3.5**: Implement `axi_driver.sv`:
  - Fetch transaction via `seq_item_port.get_next_item(req)`.
@@ -74,7 +74,7 @@ verif/
 
 ---
 
-### Day 8–10: C++ DPI Golden Predictor & Scoreboard
+### Day 8-10: C++ DPI Golden Predictor & Scoreboard
 - [ ] **Step 3.8**: Implement `golden_accel.cpp` implementing the Q8.8 matrix multiplication algorithm with saturation logic from [[04_Scoreboard_and_DPI_C_Golden_Model#2-the-golden-c-reference-model-golden_accelcpp|golden_accel.cpp]].
 - [ ] **Step 3.9**: Compile the C++ file using GCC into an object library:
  ```bash
@@ -87,7 +87,7 @@ verif/
 
 ---
 
-### Day 11–14: Functional Coverage Closure & Regression
+### Day 11-14: Functional Coverage Closure & Regression
 - [ ] **Step 3.11**: Implement `soc_coverage.sv` containing the covergroups from [[05_Functional_Coverage_and_Closure#2-systemverilog-coverage-modeling-covergroups--bins|Functional Coverage]]:
  - Instruction opcodes coverpoint.
  - Pipeline hazards & forwarding paths coverpoint.

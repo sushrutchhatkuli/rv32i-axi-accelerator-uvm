@@ -12,7 +12,7 @@ status: "Completed"
 # Computer Engineering From Absolute Zero
 
 > [!TIP] **Goal of this Note**
-> If you have never taken a single class in Computer Engineering, Electrical Engineering, or Digital Logic, this note will build your mental model from scratch. By the time you finish reading this, every term in modern computer chip design—from **Clock Cycles** and **Flip-Flops** to **Pipelines**, **Buses**, and **UVM Testbenches**—will make complete intuitive sense.
+> If you have never taken a single class in Computer Engineering, Electrical Engineering, or Digital Logic, this note will build your mental model from scratch. By the time you finish reading this, every term in modern computer chip design - from **Clock Cycles** and **Flip-Flops** to **Pipelines**, **Buses**, and **UVM Testbenches** - will make complete intuitive sense.
 
 ---
 

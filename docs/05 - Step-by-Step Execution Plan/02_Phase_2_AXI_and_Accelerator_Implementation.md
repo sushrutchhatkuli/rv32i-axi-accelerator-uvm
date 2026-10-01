@@ -40,14 +40,14 @@ rtl/
 
 ## Day-by-Day Implementation Roadmap
 
-### Day 1–4: AXI4-Lite Master & RAM Slave
+### Day 1-4: AXI4-Lite Master & RAM Slave
 - [ ] **Step 2.1**: Implement `axi_lite_master.sv` following the 5-state FSM described in [[02_AXI4_Lite_Master_and_Slave_Design|AXI Master Design]].
 - [ ] **Step 2.2**: Implement `axi_ram_ctrl.sv`. Connect it to an on-chip dual-port SRAM holding 64 KB of program code and data.
 - [ ] **Step 2.3**: Verify basic CPU-to-RAM access over AXI: execute `SW` (Store Word) and `LW` (Load Word) across the AXI bus and ensure `OKAY (2'b00)` responses.
 
 ---
 
-### Day 5–8: Custom Compute Accelerator
+### Day 5-8: Custom Compute Accelerator
 - [ ] **Step 2.4**: Implement `mac_unit.sv`.
  - Takes two 16-bit signed Q8.8 inputs.
  - Computes 32-bit product, right-shifts by 8, adds accumulator.
@@ -61,7 +61,7 @@ rtl/
 
 ---
 
-### Day 9–11: AXI Interconnect Crossbar
+### Day 9-11: AXI Interconnect Crossbar
 - [ ] **Step 2.8**: Implement `axi_interconnect.sv`:
  - Decode `AWADDR` / `ARADDR`:
  - `0x0000_0000 - 0x2000_FFFF` $\rightarrow$ Route to RAM Controller.
@@ -70,7 +70,7 @@ rtl/
 
 ---
 
-### Day 12–14: SoC Integration & C Firmware Boot
+### Day 12-14: SoC Integration & C Firmware Boot
 - [ ] **Step 2.9**: Assemble the complete chip inside `soc_top.sv`.
 - [ ] **Step 2.10**: Write the C firmware application (`main.c`) utilizing the C driver from [[02_Accelerator_Datapath_and_FSM#4-hardware-software-flow-real-c-firmware-driver|Firmware Driver]]:
  1. Populate matrices $A$ and $B$.
