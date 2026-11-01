@@ -7,7 +7,7 @@
 //              with saturation clamping:
 //                - Max Positive: +127.996 (0x7FFF / 32767)
 //                - Min Negative: -128.0   (0x8000 / -32768)
-//              Exported to SystemVerilog via the standard IEEE DPI-C interface.
+//              Written for DPI-C export; not yet linked into the Icarus simulation flow.
 // =============================================================================
 
 #include <stdint.h>

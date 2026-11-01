@@ -1,7 +1,7 @@
 // =============================================================================
 // File: axi_driver.sv
 // Project: Heterogeneous RISC-V SoC with AXI4-Lite & Accelerator
-// Description: UVM Driver Component.
+// Description: Class-based AXI driver (UVM-style, no uvm_pkg).
 //              Fetches transaction objects (axi_seq_item) and converts them
 //              into physical signal transitions on the AXI bus using the
 //              driver_cb clocking block to guarantee zero delta-cycle races.

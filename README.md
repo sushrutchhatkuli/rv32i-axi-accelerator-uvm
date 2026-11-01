@@ -1,7 +1,7 @@
 # Heterogeneous RISC-V SoC with AMBA AXI4-Lite Interconnect and Matrix Accelerator
 
 [![SystemVerilog](https://img.shields.io/badge/SystemVerilog-IEEE--1800-blue.svg)](https://standards.ieee.org/ieee/1800/6817/)
-[![UVM](https://img.shields.io/badge/UVM-IEEE--1800.2-brightgreen.svg)](https://standards.ieee.org/ieee/1800.2/7140/)
+[![Verification](https://img.shields.io/badge/Verification-Class--Based%20SV%20Testbench-brightgreen.svg)](verif/)
 [![ISA](https://img.shields.io/badge/ISA-RISC--V%20RV32IM-red.svg)](https://riscv.org/technical/specifications/)
 [![Interconnect](https://img.shields.io/badge/Bus-AMBA%20AXI4--Lite-orange.svg)](https://developer.arm.com/architectures/system-architectures/amba)
 [![Firmware](https://img.shields.io/badge/Firmware-Bare--Metal%20C%20%2F%20ASM-success.svg)](firmware/)
@@ -9,9 +9,11 @@
 [![Synthesis](https://img.shields.io/badge/ASIC%20Synthesis-161.4k%20Gates%20(Clean)-blue.svg)](scripts/run_synthesis.py)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
-An open-source, synthesizable Heterogeneous System-on-Chip (SoC) architecture, bare-metal firmware driver stack, and constrained-random Universal Verification Methodology (UVM) test environment designed in SystemVerilog.
+An open-source, synthesizable Heterogeneous System-on-Chip (SoC) architecture, bare-metal firmware driver stack, and UVM-style class-based SystemVerilog verification environment.
 
-The system integrates a 5-stage pipelined RISC-V RV32IM processor core with a dedicated 4-MAC matrix coprocessor over an ARM AMBA AXI4-Lite interconnect bus. The platform executes autonomous bare-metal C and assembly firmware, validated through an IEEE 1800.2 UVM verification environment, SystemVerilog Assertions (SVA), a C++ DPI-C golden reference model, and a 12-testbench automated regression test suite.
+The system integrates a 5-stage pipelined RISC-V RV32IM processor core with a dedicated 4-MAC matrix coprocessor over an ARM AMBA AXI4-Lite interconnect bus. The platform executes autonomous bare-metal C and assembly firmware, validated through a class-based SystemVerilog testbench (driver, monitor, scoreboard, coverage collector) modeled on UVM structure, self-checking testbenches, and a 12-testbench automated regression suite.
+
+> **Note on methodology:** the verification environment follows UVM's component structure but is written in plain SystemVerilog classes so it runs on Icarus Verilog, which does not support the UVM library (`uvm_pkg`). It does not use UVM base classes, the factory, phasing, or TLM ports.
 
 ---
 
@@ -41,10 +43,10 @@ This project addresses computational efficiency by coupling a standard RISC-V co
 
 ### Core Objectives and Design Philosophy
 
-- **Synthesizable Hardware Design**: Every RTL module is written in standard SystemVerilog (IEEE 1800), verified with open-source tools (Icarus Verilog, Verilator), and synthesized to standard CMOS cell libraries using Yosys.
+- **Synthesizable Hardware Design**: Every RTL module is written in standard SystemVerilog (IEEE 1800), verified with open-source tools (Icarus Verilog), and synthesized to standard CMOS cell libraries using Yosys.
 - **Protocol Compliance**: Bus transfers strictly obey ARM AMBA AXI4-Lite specifications with complete valid-ready handshake integrity.
 - **Hardware and Software Co-Design**: Autonomous bare-metal firmware boots from RAM, programs accelerator control registers, streams matrix tiles, and responds to hardware interrupt signals.
-- **Rigorous Verification**: All components are validated via self-checking testbenches, SVA protocol checkers, and an IEEE 1800.2 UVM environment backed by a C++ DPI-C mathematical golden reference.
+- **Rigorous Verification**: All components are validated via self-checking testbenches and a class-based SystemVerilog environment whose scoreboard checks accelerator outputs against a bit-exact Q8.8 reference model. A standalone C++ version of the reference model (`verif/scb/golden_accel.cpp`) is included but is not yet linked into simulation through DPI-C.
 
 ---
 
@@ -67,12 +69,12 @@ flowchart TB
         DMA -.->|"Transfer Complete IRQ"| CPU
     end
 
-    subgraph UVM["UVM Verification Framework (IEEE 1800.2)"]
-        SEQ["Constrained-Random Sequence"] --> DRV["UVM Driver"]
+    subgraph TBENV["Class-Based SystemVerilog Testbench (UVM-style)"]
+        SEQ["Randomized AXI Transaction Items"] --> DRV["Driver"]
         DRV -->|"Virtual Interface (axi_if)"| DUT
-        DUT -->|"Virtual Interface (axi_if)"| MON["UVM Monitor"]
-        MON -->|"Analysis Port"| SCB["Scoreboard & C++ DPI Golden Predictor"]
-        MON -->|"Analysis Port"| COV["Functional Coverage & SVA Checkers"]
+        DUT -->|"Virtual Interface (axi_if)"| MON["Monitor"]
+        MON --> SCB["Scoreboard & SV Reference Model"]
+        MON --> COV["Coverage Collector (hit counters)"]
     end
 ```
 
@@ -250,11 +252,13 @@ python scripts/run_synthesis.py
 
 The verification strategy follows standard digital verification practices, progressing from low-level unit testbenches to complex hardware/software co-verification.
 
-![IEEE 1800.2 UVM Verification Architecture](docs/assets/uvm_architecture.png)
+![Class-Based Verification Architecture](docs/assets/uvm_architecture.png)
 
 ### Verification Phases and Testbench Matrix
 
-| Testbench File | Target Module / Subsystem | Assertions Checked | Execution Target |
+The checks below are self-checking comparisons in each testbench (expected vs. actual), counted by the regression runner.
+
+| Testbench File | Target Module / Subsystem | Checks | Execution Target |
 |:---|:---|:---:|:---|
 | `verif/tb/tb_core_units.sv` | ALU, Register File, Immediate Decoder | 15 | `make test-core` |
 | `verif/tb/tb_control_branch.sv` | Control Unit, Branch Comparator | 20 | `make test-core` |
@@ -391,16 +395,16 @@ make synth
 │   └── top/                    # Top-level SoC integration wrapper (soc_top.sv)
 ├── verif/                      # Verification environment and testbenches
 │   ├── tb/                     # Parameterized interfaces (axi_if.sv) and testbenches
-│   ├── seq/                    # Constrained-random sequences and transaction items
-│   ├── agent/                  # UVM drivers, monitors, and sequencers
-│   ├── scb/                    # UVM scoreboard and golden reference predictor (golden_accel.cpp)
-│   ├── cov/                    # Functional coverage models and SVA property checkers
-│   ├── env/                    # UVM top-level environment container
-│   └── tests/                  # UVM test cases
+│   ├── seq/                    # Randomized AXI transaction items
+│   ├── agent/                  # Class-based AXI driver and monitor
+│   ├── scb/                    # Scoreboard with SV reference model; standalone C++ model (golden_accel.cpp, not yet DPI-linked)
+│   └── cov/                    # Coverage collector (address windows, strobes, Q8.8 corner cases)
 ├── firmware/                   # Bare-metal C programs, assembly drivers, and linker scripts
+│   ├── start.s                 # Reset/startup code
+│   ├── main.c                  # Bare-metal C driver
 │   ├── firmware.s              # Basic accelerator verification driver
 │   ├── tiled_gemm.s            # 4x4 tiled GEMM coprocessor partitioning driver
-│   └── link.ld                 # RISC-V memory map linker script
+│   └── linker.ld               # RISC-V memory map linker script
 ├── scripts/                    # Automation scripts
 │   ├── asm_to_hex.py           # Assembly to Verilog hex memory file converter
 │   ├── run_regression.py       # Automated 12-testbench regression execution runner
@@ -421,7 +425,7 @@ In-depth technical specifications, architectural calculations, mathematical deri
 - **RISC-V Core Implementation Details**: [`docs/01 - Architecture & RTL/01_RISCV_RV32I_Architecture.md`](docs/01%20-%20Architecture%20&%20RTL/01_RISCV_RV32I_Architecture.md)
 - **AMBA AXI4-Lite Protocol Analysis**: [`docs/02 - AMBA AXI Interconnect/01_AMBA_AXI4_Lite_Protocol_Deep_Dive.md`](docs/02%20-%20AMBA%20AXI%20Interconnect/01_AMBA_AXI4_Lite_Protocol_Deep_Dive.md)
 - **Matrix Accelerator Datapath**: [`docs/03 - Custom Compute Accelerator/02_Accelerator_Datapath_and_FSM.md`](docs/03%20-%20Custom%20Compute%20Accelerator/02_Accelerator_Datapath_and_FSM.md)
-- **UVM Verification Architecture**: [`docs/04 - SystemVerilog & UVM Verification/03_UVM_Hierarchy_and_Components.md`](docs/04%20-%20SystemVerilog%20&%20UVM%20Verification/03_UVM_Hierarchy_and_Components.md)
+- **Verification Architecture Notes (UVM study notes)**: [`docs/04 - SystemVerilog & UVM Verification/03_UVM_Hierarchy_and_Components.md`](docs/04%20-%20SystemVerilog%20&%20UVM%20Verification/03_UVM_Hierarchy_and_Components.md)
 
 Opening the `docs/` folder inside Obsidian provides interactive graph views and cross-linked markdown navigation across all engineering notes.
 

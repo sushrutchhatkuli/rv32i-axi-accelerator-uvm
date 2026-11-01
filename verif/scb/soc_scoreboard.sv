@@ -62,7 +62,7 @@ class soc_scoreboard;
 
     function void print_summary();
         $display("\n=======================================================");
-        $display("  UVM SCOREBOARD & GOLDEN PREDICTOR SUMMARY");
+        $display("  SCOREBOARD & REFERENCE MODEL SUMMARY");
         $display("  Total Checks  : %0d", total_checks);
         $display("  Passed Checks : %0d", passed_checks);
         $display("  Failed Checks : %0d", failed_checks);

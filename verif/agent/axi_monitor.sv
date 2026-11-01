@@ -1,7 +1,7 @@
 // =============================================================================
 // File: axi_monitor.sv
 // Project: Heterogeneous RISC-V SoC with AXI4-Lite & Accelerator
-// Description: UVM Monitor Component.
+// Description: Class-based AXI monitor (UVM-style, no uvm_pkg).
 //              Passively samples the AXI bus pins on every posedge clk using
 //              the monitor_cb clocking block (#1step preponed sampling).
 //              Reconstructs completed write/read transactions and passes them

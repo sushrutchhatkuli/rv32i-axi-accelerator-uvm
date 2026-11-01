@@ -110,7 +110,7 @@ module tb_top;
         coverage   = new();
 
         $display("\n=======================================================");
-        $display("  STARTING IEEE 1800.2 UVM VERIFICATION ENVIRONMENT");
+        $display("  STARTING CLASS-BASED SV VERIFICATION ENVIRONMENT");
         $display("=======================================================\n");
 
         #30;
@@ -118,9 +118,9 @@ module tb_top;
         #20;
 
         // ---------------------------------------------------------------------
-        // Step 1: Constrained-Random AXI Bus Stimulus & Coverage Sampling
+        // Step 1: Randomized AXI Bus Stimulus & Coverage Sampling
         // ---------------------------------------------------------------------
-        $display("--- Step 1: Generating Constrained-Random AXI Traffic ---");
+        $display("--- Step 1: Generating Randomized AXI Traffic ---");
         begin
             axi_seq_item item;
             for (int t = 0; t < 20; t = t + 1) begin
@@ -129,7 +129,7 @@ module tb_top;
                 coverage.sample_axi(item.addr, item.strb, item.delay_cycles);
             end
         end
-        $display("  [SUCCESS] 20 Constrained-Random AXI Transactions Generated & Covered");
+        $display("  [SUCCESS] 20 Randomized AXI Transactions Generated & Covered");
 
         // ---------------------------------------------------------------------
         // Step 2: Test Case A - Standard 2x2 Matrix Multiplication
